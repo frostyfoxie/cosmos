@@ -1,0 +1,336 @@
+/* Light Cosmic Palette */
+:root {
+    --cosmic-cream: #f8f5f0;
+    --star-dust: #e8e1d9;
+    --cosmic-blue: rgba(167, 196, 212, 0.2); /* Reduced opacity */
+    --nebula-pink: #d4a5a5;
+    --accent-gold: #b8a26d;
+    --text-dark: #3a3a3a;
+}
+
+/* Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Georgia', serif;
+    background-color: var(--cosmic-cream);
+    color: var(--text-dark);
+    line-height: 1.6;
+    overflow-x: hidden;
+    touch-action: manipulation;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Cosmic Header */
+header {
+    height: 100vh;
+    min-height: 600px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    padding: 2rem;
+    background: var(--cosmic-cream);
+}
+
+.glass-pane {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--cosmic-blue);
+    backdrop-filter: blur(5px);
+    z-index: 1;
+}
+
+.title-container {
+    text-align: center;
+    z-index: 2;
+    position: relative;
+}
+
+h1 {
+    font-size: clamp(2rem, 8vw, 4rem);
+    margin-bottom: 1rem;
+    color: var(--text-dark);
+    letter-spacing: 0.1rem;
+    font-weight: normal;
+    position: relative;
+}
+
+.subtitle {
+    font-size: clamp(1rem, 3vw, 1.5rem);
+    opacity: 0.8;
+    max-width: 600px;
+    margin: 0 auto;
+}
+/* Main Content */
+main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+    position: relative;
+    z-index: 3;
+    background-color: var(--cosmic-cream);
+}
+
+/* Blog Grid */
+.blog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(1fr, 1fr));
+    gap: 2rem;
+    margin-bottom: 4rem;
+}
+
+/* Blog Card - Minimalist Style */
+.blog-card {
+    background: white;
+    border-radius: 8px;
+    padding: 2rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    position: relative;
+}
+
+.blog-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.blog-card h2 {
+    font-size: 1.3rem;
+    margin-bottom: 0.8rem;
+    color: var(--text-dark);
+    font-weight: normal;
+    line-height: 1.4;
+}
+
+.blog-card .meta {
+    font-size: 0.9rem;
+    color: var(--accent-gold);
+    margin-bottom: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.blog-card p {
+    margin-bottom: 1rem;
+    color: var(--text-dark);
+    opacity: 0.9;
+}
+
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.tag {
+    background: rgba(184, 162, 109, 0.1);
+    color: var(--accent-gold);
+    padding: 0.3rem 0.8rem;
+    font-size: 0.8rem;
+    border-radius: 20px;
+    border: 1px solid rgba(184, 162, 109, 0.3);
+}
+
+/* Interactive Label - Fixed Positioning */
+.interactive-label {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: var(--nebula-pink);
+    color: white;
+    padding: 0.2rem 0.6rem;
+    font-size: 0.7rem;
+    border-radius: 3px;
+    z-index: 1;
+}
+
+/* Contacts Section */
+.contacts {
+    background: white;
+    padding: 3rem 2rem;
+    text-align: center;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.contacts h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    color: var(--text-dark);
+    font-weight: normal;
+}
+
+.contact-links {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.contact-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.5rem;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+    background: rgba(184, 162, 109, 0.1);
+    border: 1px solid rgba(184, 162, 109, 0.3);
+}
+
+.contact-link:hover {
+    background: rgba(184, 162, 109, 0.2);
+    transform: translateY(-3px);
+}
+
+.contact-link i {
+    font-size: 1.2rem;
+}
+
+/* Nutshell System 
+.nutshell-term {
+    color: var(--accent-gold);
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    cursor: help;
+    position: relative;
+    display: inline-block;
+}
+
+.nutshell-container {
+    position: fixed;
+    width: 300px;
+    max-height: 400px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    padding: 1.5rem;
+    overflow-y: auto;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+    pointer-events: none;
+    border: 1px solid var(--star-dust);
+}
+
+.nutshell-container.visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.nutshell-container h3 {
+    color: var(--accent-gold);
+    margin-bottom: 0.8rem;
+    font-size: 1.2rem;
+    font-weight: normal;
+}
+
+.nutshell-container p {
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.nutshell-container img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+.nutshell-container .close-btn {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: var(--text-dark);
+    opacity: 0.5;
+}
+
+.nutshell-container .close-btn:hover {
+    opacity: 1;
+}
+
+/* Highlight active term 
+.nutshell-term.active {
+    background-color: rgba(184, 162, 109, 0.2);
+    border-radius: 3px;
+}
+*/
+/* Cosmic Explorations Article */
+.cosmic-explorations {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    margin-top: 3rem;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .blog-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    header {
+        min-height: 500px;
+        height: 80vh;
+    }
+    
+    main {
+        padding: 3rem 1.5rem;
+    }
+    
+    .contact-links {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: center;
+    }
+    
+    .nutshell-container {
+        width: 280px;
+        max-height: 60vh;
+    }
+}
+
+@media (max-width: 480px) {
+    header {
+        min-height: 400px;
+        height: 70vh;
+    }
+    
+    .blog-card {
+        padding: 1.5rem;
+    }
+    
+    .blog-card .meta {
+        font-size: 0.8rem;
+    }
+    
+    .nutshell-container {
+        width: 90%;
+        left: 5% !important;
+        right: 5% !important;
+    }
+}

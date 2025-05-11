@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Gravity Garden with Rigid Border</title>
+
+  <style>
+
+    body { margin: 0; overflow: hidden; background: #eeeeee; }
+
+    canvas { display: block; }
+
+  </style>
+
+</head>
+
+<body>
+
+<script src="https://cdn.jsdelivr.net/npm/matter-js@0.19.0/build/matter.min.js"></script>
+
+<script>
+
+  const { Engine, Render, Runner, World, Bodies, Mouse, MouseConstraint, Composite, Body, Events, Common } = Matter;
+
+  // Setup engine and world
+
+  const engine = Engine.create();
+
+  const world = engine.world;
+
+  const width = window.innerWidth;
+
+  const height = window.innerHeight;
+
+  // Renderer settings
+
+  const render = Render.create({
+
+    element: document.body,
+
+    engine: engine,
+
+    options: {
+
+      width: width,
+
+      height: height,
+
+      wireframes: false,
+
+      background: "#ffffff"
+
+    }
+
+  });
+
+  Render.run(render);
+
+  const runner = Runner.create();
+
+  Runner.run(runner, engine);
+
+  // Set gravity to fall down
+
+  engine.world.gravity.y = 1;
+
+  // Function to spawn random objects (only circles now)
+
+  function spawnObjects(count = 10) {
+
+    for (let i = 0; i < count; i++) {
+
+      const size = 20 + Math.random() * 20;
+
+      const color = `hsl(${Math.random() * 360}, 70%, 60%)`;
+
+      const x = Math.random() * width;
+
+      const y = Math.random() * height / 2;
+
+      // Create a circle
+
+      const body = Bodies.circle(x, y, size, {
+
+        restitution: 1, // Bouncy effect
+
+        friction: 0,
+
+        frictionAir: 0,
+
+        render: { fillStyle: color }
+
+      });
+
+      World.add(world, body);
+
+    }
+
+  }
+
+  // Function to simulate gravity (shift up/down) - we can randomly switch gravity direction
+
+  function simulateGravityGarden() {
+
+    if (Math.random() < 0.01) {
+
+      const gravityDirection = Math.random() < 0.5 ? 1 : -1;  // Random gravity direction (down or up)
+
+      engine.world.gravity.y = gravityDirection;  // Update gravity direction
+
+    }
+
+  }
+
+  // Add initial objects to the scene (only circles now)
+
+  spawnObjects(50);
+
+  // Mouse control for interaction (optional)
+
+  const mouse = Mouse.create(render.canvas);
+
+  const mouseConstraint = MouseConstraint.create(engine, {
+
+    mouse: mouse,
+
+    constraint: {
+
+      stiffness: 0.2,
+
+      render: { visible: false }
+
+    }
+
+  });
+
+  Composite.add(world, mouseConstraint);
+
+  render.mouse = mouse;
+
+  // Add a bouncy ground with modified friction and restitution
+
+  const ground = Bodies.rectangle(width / 2, height + 43, width, 100, { 
+
+    isStatic: true,
+
+    restitution: 1,  // Bouncy floor (objects will bounce)
+
+    friction: 0,     // Less friction so objects slide more easily
+
+    frictionAir: 0  // More air friction for slippiness
+
+  });
+
+  World.add(world, ground);
+
+  // Add rigid borders (edges) with high friction and no bounce
+
+  const borderThickness = 20;
+
+  const borderOptions = {
+
+    isStatic: true,
+
+    friction: 1,       // High friction for a rigid effect
+
+    restitution: 1      // No bounce
+
+  };
+
+  // Left border
+
+  const leftBorder = Bodies.rectangle(0, height / 2, borderThickness, height, borderOptions);
+
+  World.add(world, leftBorder);
+
+  // Right border
+
+  const rightBorder = Bodies.rectangle(width, height / 2, borderThickness, height, borderOptions);
+
+  World.add(world, rightBorder);
+
+  // Top border
+
+  const topBorder = Bodies.rectangle(width / 2, 0, width, borderThickness, borderOptions);
+
+  World.add(world, topBorder);
+
+  // Bottom border (already added as ground)
+
+  
+
+  // Update the scene and apply gravity
+
+  Events.on(engine, 'beforeUpdate', function () {
+
+    simulateGravityGarden();
+
+  });
+
+  // Function to randomize time scaling
+
+  function randomizeTimeScale() {
+
+    const randomTimeScale = 0.005 + Math.random() * 0.5; // Random time scale between 0.5 and 3
+
+    engine.timing.timeScale = randomTimeScale;
+
+  }
+
+  // Call the randomize function every 3 seconds
+
+  setInterval(randomizeTimeScale, 3000); // Change time scale every 3 seconds
+
+</script>
+
+</body>
+
+</html>
