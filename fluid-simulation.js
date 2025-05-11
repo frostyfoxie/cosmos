@@ -8,9 +8,13 @@ class FluidSimulation {
             ['#FF9AA2', '#FFB7B2'], // Pink
             ['#FFDAC1', '#E2F0CB'], // Peach/Light Green
             ['#B5EAD7', '#C7CEEA'], // Mint/Lavender
-            ['#F8B195', '#F67280'], // Coral
+            ['#7A1CAC', '#F67280'], // Coral
             ['#6C5B7B', '#C06C84'], // Purple
-            ['#355C7D', '#6C5B7B']  // Blue/Purple
+            ['#355C7D', '#6C5B7B'],  // Blue/Purple
+            ['#670D2F','#F7374F'],
+            ['#8E1616','#500073'],
+            ['#C7CEEA','#B5EAD7'],
+            ['#E2F0CB','#FFDAC1']
         ];
         this.isScrolling = false;
         this.touchStartY = 0.5;
@@ -136,13 +140,13 @@ class FluidSimulation {
             blob.size *= 0.995;
             
             // Remove dead blobs
-            if (blob.life <= 0 || blob.size < 5) {
+            if (blob.life <= 0 || blob.size < 2) {
                 this.blobs.splice(i, 1);
             }
         }
         
         // Add random blobs occasionally
-        if (Math.random() < 0.03 && this.blobs.length < 8) {
+        if (Math.random() < 0.2 && this.blobs.length < 15) {
             this.createBlob(
                 Math.random() * this.width,
                 Math.random() * this.height
