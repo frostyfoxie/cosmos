@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Black Hole with Radial Light Sources</title>
+
+  <style>
+
+    body {
+
+      margin: 0;
+
+      padding: 0;
+
+      display: flex;
+
+      justify-content: center;
+
+      align-items: center;
+
+      height: 100vh;
+      
+      width:100%;
+
+      overflow: hidden;
+
+      background-color: black;
+
+    }
+
+    #controls {
+
+      position: absolute;
+
+      top: 20px;
+
+      left: 20px;
+
+      z-index: 10;
+
+      color: white;
+
+    }
+
+    #toggleBtn {
+
+      padding: 10px 20px;
+
+      background-color: #fff;
+
+      border: none;
+
+      cursor: pointer;
+
+    }
+
+    canvas {
+
+      border: 2px solid white;
+
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+  <div id="controls">
+
+    <button id="toggleBtn">Toggle Background</button>
+
+  </div>
+
+  <canvas id="blackHoleCanvas"></canvas>
+
+  <script>
+
+    const canvas = document.getElementById('blackHoleCanvas');
+
+    const ctx = canvas.getContext('2d');
+
+    let lightSources = [];
+
+    let photons = [];
+
+    let isWhiteBackground = false;
+
+    let blackHole = { x: 2*canvas.width, y: 2*canvas.height, radius: 50 };
+
+    // Set canvas dimensions
+
+    canvas.width = window.innerWidth;
+
+    canvas.height = window.innerHeight;
+
+    // Black Hole draw function
+
+    function drawBlackHole() {
+
+      ctx.beginPath();
+
+      ctx.arc(blackHole.x, blackHole.y, blackHole.radius, 0, 2 * Math.PI);
+
+      ctx.fillStyle = 'black';
+
+      ctx.fill();
+
+    }
+
+    // Draw photons
+
+    function drawPhotons() {
+
+      for (let i = 0; i < photons.length; i++) {
+
+        const photon = photons[i];
+
+        ctx.beginPath();
+
+        ctx.arc(photon.x, photon.y, 2, 0, 2 * Math.PI);
+
+        ctx.fillStyle = photon.color;
+
+        ctx.fill();
+
+      }
+
+    }
+
+    // Update photon positions with gravitational lensing effect
+
+    function updatePhotons() {
+
+      for (let i = 0; i < photons.length; i++) {
+
+        const photon = photons[i];
+
+        // Calculate gravitational attraction (simple approximation)
+
+        const dx = blackHole.x - photon.x;
+
+        const dy = blackHole.y - photon.y;
+
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        const force = 5000 / (distance*distance+10000); // Stronger gravitational force closer to black hole
+
+        // Apply force towards the black hole (simplified)
+
+        const angle = Math.atan2(dy, dx);
+
+        const fx = Math.cos(angle) * force;
+
+        const fy = Math.sin(angle) * force;
+
+        photon.vx += fx;
+
+        photon.vy += fy;
+
+        // Update photon position
+
+        photon.x += photon.vx;
+
+        photon.y += photon.vy;
+
+      }
+
+    }
+
+    // Add light source at click position
+
+    function addLightSource(event) {
+
+      const x = event.clientX;
+
+      const y = event.clientY;
+
+      
+
+      lightSources.push({ x, y });
+
+      // Continuously emit photons from this light source
+
+      setInterval(() => {
+
+        for (let angle = 0; angle < 360; angle += 10) {
+
+          let radian = angle * Math.PI / 180;
+
+          let vx = Math.cos(radian) * 2;
+
+          let vy = Math.sin(radian) * 2;
+
+          let color = isWhiteBackground ? 'red' : 'white'; // Change color based on background
+
+          photons.push({
+
+            x: x,
+
+            y: y,
+
+            vx: vx,
+
+            vy: vy,
+
+            color: color,
+
+          });
+
+        }
+
+      }, 150); // Emit photons every 100ms
+
+    }
+
+    // Toggle the background color and photon color
+
+    function toggleBackground() {
+
+      isWhiteBackground = !isWhiteBackground;
+
+      document.body.style.backgroundColor = isWhiteBackground ? 'white' : 'black';
+
+    }
+
+    // Event listeners
+
+    document.getElementById('toggleBtn').addEventListener('click', toggleBackground);
+
+    canvas.addEventListener('click', addLightSource);
+
+    // Main loop
+
+    function animate() {
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      drawBlackHole();
+
+      updatePhotons();
+
+      drawPhotons();
+
+      requestAnimationFrame(animate);
+
+    }
+
+    animate();
+
+  </script>
+
+</body>
+
+</html>

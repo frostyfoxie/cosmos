@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Cosmic Explorations | Stellar Journal</title>
+
+    <link rel="stylesheet" href="blog.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+</head>
+
+<body>
+
+    <!-- Home Navigation -->
+
+    <a href="/index.html" class="nav-home" aria-label="Home">
+
+        <i class="fas fa-home"></i>
+
+    </a>
+
+    
+
+    <!-- Blog Header -->
+
+    <header class="blog-header">
+
+        <h1 class="blog-title">Galaxies and Cosmic Structures</h1>
+
+        <div class="blog-meta">
+
+            <span><i class="far fa-calendar-alt"></i> April 14, 2025</span>
+
+            <span><i class="far fa-clock"></i> 4 min read</span>
+
+        </div>
+
+        <div class="blog-tags">
+
+            <span class="tag">Astronomy</span>
+
+            <span class="tag">Cosmology</span>
+
+            <span class="tag">Space</span>
+
+        </div>
+
+    </header>
+
+    
+
+    <!-- Blog Content -->
+
+    <div class="blog-container">
+
+        <article class="blog-content">
+
+            <p>The universe is a vast tapestry of galaxies, each a magnificent island of stars, gas, and dust. From our vantage point in the Milky Way, we peer across cosmic distances to observe these celestial cities, each with its own unique structure and history.</p>
+
+            
+
+            <h2>The Dance of Galaxies</h2>
+
+            
+
+            <p>Galaxies are not static islands in space but dynamic systems engaged in an eternal dance. Gravity, the choreographer of the cosmos, pulls galaxies together in clusters and superclusters, while the expansion of the universe stretches the space between them.</p>
+
+            
+
+            <img src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" alt="Galaxy cluster">
+
+            
+
+            <p>The most striking examples of galactic interactions are the majestic spiral galaxies like our Milky Way and Andromeda. These pinwheel-shaped structures rotate slowly, their spiral arms tracing out patterns of star formation. In about 4 billion years, the Milky Way and Andromeda will collide, merging to form a new, larger galaxy.</p>
+
+            
+
+            <h3>Elliptical Galaxies</h3>
+
+            
+
+            <p>Elliptical galaxies, smooth and featureless, represent a later stage in galactic evolution. These are often found at the centers of galaxy clusters, having grown massive through countless mergers. Their stars orbit in random directions, giving them their rounded shapes.</p>
+
+            
+
+            <blockquote>
+
+                "The galaxies are like books in a cosmic library, each containing the history of the universe written in the language of stars."
+
+            </blockquote>
+
+            
+
+            <h2>Cosmic Structures</h2>
+
+            
+
+            <p>On the largest scales, galaxies arrange themselves in filaments and walls, surrounding vast empty voids. This cosmic web is the result of tiny density fluctuations in the early universe, amplified over billions of years by gravity.</p>
+
+            
+
+            <img src="https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" alt="Cosmic web simulation">
+
+            
+
+            <p>The study of these large-scale structures helps us understand the composition of the universe, including the mysterious dark matter that provides the gravitational scaffolding for galaxy formation.</p>
+
+            
+
+            <!-- Like Button Section 
+
+            <div class="like-section">
+
+                <button class="like-btn" id="likeButton">
+
+                    <i class="far fa-heart"></i>
+
+                    <span id="likeCount">42</span> Likes
+
+                </button>
+
+            </div>
+
+        </article--->
+
+        
+
+        <!-- Comments Section -->
+
+        <!---section class="comments-section">
+
+            <h2>Join the Cosmic Conversation</h2>
+
+            
+
+            <div class="comment-form">
+
+                <textarea id="commentInput" placeholder="Share your thoughts about the cosmos..."></textarea>
+
+                <button id="submitComment">Post Comment</button>
+
+            </div>
+
+            
+
+            <div class="comments-list" id="commentsList">
+
+                <!-- Comments will be loaded here 
+
+                <div class="comment">
+
+                    <div class="comment-header">
+
+                        <div class="comment-avatar">S</div>
+
+                        <div>
+
+                            <span class="comment-author">StellarExplorer</span>
+
+                            <span class="comment-date">May 10, 2025</span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="comment-content">
+
+                        The visualization of the cosmic web is particularly fascinating. It's amazing to think we can map structures on such massive scales!
+
+                    </div>
+
+                </div>
+
+                
+
+                <div class="comment">
+
+                    <div class="comment-header">
+
+                        <div class="comment-avatar">C</div>
+
+                        <div>
+
+                            <span class="comment-author">CosmicDreamer</span>
+
+                            <span class="comment-date">April 28, 2025</span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="comment-content">
+
+                        I've always been captivated by galactic collisions. The idea that our Milky Way will one day merge with Andromeda is both terrifying and beautiful.
+
+                    </div>
+
+                </div>
+
+           </div>
+
+        </section--->
+
+    </div>
+
+    <script src="blog.js"></script>
+
+</body>
+
+</html>

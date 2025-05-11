@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Interactive Particle Art with Variable Sizes</title>
+
+    <style>
+
+        body { margin: 0; overflow: hidden; background-color: #ffffff; }
+
+        canvas { display: block; }
+
+    </style>
+
+</head>
+
+<body>
+
+    <script src="https://cdn.jsdelivr.net/npm/matter-js@0.14.2/build/matter.min.js"></script>
+
+    <script>
+
+        const { Engine, Render, World, Bodies, Mouse, MouseConstraint, Events, Body, Vector } = Matter;
+
+        // Create engine and world
+
+        const engine = Engine.create();
+
+        const world = engine.world;
+
+        // Set up renderer
+
+        const render = Render.create({
+
+            element: document.body,
+
+            engine: engine,
+
+            options: {
+
+                width: window.innerWidth,
+
+                height: window.innerHeight,
+
+                wireframes: false,
+
+                background: '#ffffff',
+
+            }
+
+        });
+
+        Render.run(render);
+
+        // Create mouse constraint
+
+        const mouse = Mouse.create(render.canvas);
+
+        const mouseConstraint = MouseConstraint.create(engine, { mouse: mouse });
+
+        World.add(world, mouseConstraint);
+
+        // Create walls
+
+        const ground = Bodies.rectangle(window.innerWidth / 2, window.innerHeight - 10, window.innerWidth, 50, { isStatic: true });
+
+        const leftWall = Bodies.rectangle(0, window.innerHeight / 2, 50, window.innerHeight, { isStatic: true });
+
+        const rightWall = Bodies.rectangle(window.innerWidth, window.innerHeight / 2, 50, window.innerHeight, { isStatic: true });
+
+        const topWall = Bodies.rectangle(window.innerWidth / 2, 0, window.innerWidth, 50, { isStatic: true });
+
+        World.add(world, [ground, leftWall, rightWall, topWall]);
+
+        // Function to create particles with variable size
+
+        function createParticle(x, y) {
+
+            // Random size between 3 and 15 for each particle
+
+            const size = Math.random() * 12 + 3;
+
+            const particle = Bodies.circle(x, y, size, {
+
+                restitution: 0.7, // Bouncing effect
+
+                frictionAir: 0.05, // Reducing air friction for smooth motion
+
+                render: { 
+
+                    fillStyle: 'rgb(' + Math.floor(Math.random() * 255) + ',' + Math.floor(Math.random() * 255) + ',' + Math.floor(Math.random() * 255) + ')'
+
+                }
+
+            });
+
+            // Add the particle to the world
+
+            World.add(world, particle);
+
+        }
+
+        // Create particles following the mouse
+
+        Events.on(mouseConstraint, 'mousemove', function(event) {
+
+            const mousePosition = event.mouse.position;
+
+            createParticle(mousePosition.x, mousePosition.y);
+
+        });
+
+        // Resize the canvas if the window size changes
+
+        window.addEventListener('resize', () => {
+
+            render.options.width = window.innerWidth;
+
+            render.options.height = window.innerHeight;
+
+            render.canvas.width = window.innerWidth;
+
+            render.canvas.height = window.innerHeight;
+
+        });
+
+        // Run the engine
+
+        Engine.run(engine);
+
+    </script>
+
+</body>
+
+</html>

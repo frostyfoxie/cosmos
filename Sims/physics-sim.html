@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Physics Simulations</title>
+    <style>
+        /* Light Cosmic Palette */
+        :root {
+            --cosmic-cream: #f8f5f0;
+            --star-dust: #e8e1d9;
+            --cosmic-blue: rgba(167, 196, 212, 0.2);
+            --nebula-pink: #d4a5a5;
+            --accent-gold: #b8a26d;
+            --text-dark: #3a3a3a;
+        }
+        
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Georgia', serif;
+            background-color: var(--cosmic-cream);
+            color: var(--text-dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+            touch-action: manipulation;
+        }
+        
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        /* Navigation */
+        .nav-home {
+            position: fixed;
+            top: 1.5rem;
+            left: 1.5rem;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.8);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .nav-home:hover {
+            background: white;
+            transform: scale(1.1);
+        }
+        
+        .nav-home i {
+            font-size: 1.2rem;
+            color: var(--accent-gold);
+        }
+        
+        /* Page Header */
+        .page-header {
+            height: 40vh;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            padding: 2rem;
+            background: var(--cosmic-cream);
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .page-title {
+            font-size: clamp(1.8rem, 5vw, 3rem);
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+            font-weight: normal;
+            position: relative;
+            max-width: 800px;
+        }
+        
+        .page-subtitle {
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            opacity: 0.8;
+            max-width: 700px;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Simulations Container */
+        .simulations-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem 4rem;
+            display: block;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+        
+        /* Simulation Window */
+        .simulation-window {
+            background: white;
+            border-radius: 8px;
+            padding: 50px;
+          margin-bottom:100px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.05);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .simulation-window:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .simulation-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--star-dust);
+        }
+        
+        .simulation-title {
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+        
+        .simulation-description {
+            font-size: 0.95rem;
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+        
+        .simulation-preview {
+            height: 600px;
+            position: relative;
+            overflow: hidden;
+            background: #f5f5f5;
+        }
+        
+        .simulation-preview iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+        }
+        
+        .simulation-actions {
+            padding: 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--star-dust);
+        }
+        
+        .simulation-btn {
+            background: var(--accent-gold);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .simulation-btn:hover {
+            background: #a58e4f;
+        }
+        
+        .simulation-btn i {
+            font-size: 0.9rem;
+        }
+        
+        /* Fullscreen Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            padding: 2rem;
+        }
+        
+        .modal-content {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            color: white;
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+        
+        .modal-iframe-container {
+            flex-grow: 1;
+            position: relative;
+        }
+        
+        .modal-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .simulations-container {
+                grid-template-columns: 1fr;
+                padding: 0 1.5rem 3rem;
+            }
+            
+            .page-header {
+                height: 30vh;
+                min-height: 250px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .page-header {
+                height: 25vh;
+                min-height: 200px;
+            }
+            
+            .simulation-window {
+                min-width: 0;
+            }
+        }
+    </style>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <!-- Home Navigation -->
+    <a href="https://frostyfoxie.github.io/comos/index.html" class="nav-home" aria-label="Home">
+        <i class="fas fa-home"></i>
+    </a>
+    
+    <!-- Page Header -->
+    <header class="page-header">
+        <h1 class="page-title">Gravitation Lensing Simulations</h1>
+        <p class="page-subtitle">Interactive explorations of celestial phenomena and cosmic structures</p>
+    </header>
+    
+    <!-- Simulations Container -->
+    <div class="simulations-container">
+        <!-- Simulation 1 -->
+        <div class="simulation-window">
+            <div class="simulation-header">
+                <h2 class="simulation-title">Time Scaling</h2>
+            </div>
+            <div class="simulation-preview">
+                <iframe src="physics/1.html" title="Time Scaling"></iframe>
+            </div>
+            <div class="simulation-actions">
+                               <a href="physics/1.html" target="_blank">
+                    <i class="fas fa-expand"></i> Fullscreen</a>
+            </div>
+        </div>
+        
+        <!-- Simulation 2 -->
+        <div class="simulation-window">
+            <div class="simulation-header">
+                <h2 class="simulation-title">Physics Art</h2>
+            </div>
+            <div class="simulation-preview">
+                <iframe src="physics/2.html" title="Physics Art"></iframe>
+            </div>
+            <div class="simulation-actions">
+                               <a href="physics/2.html" target="_blank">
+
+                    <i class="fas fa-expand"></i> Fullscreen</a>
+            </div>
+        </div>
+        </div>
+    
+    <!-- Fullscreen Modal -->
+    <div class="modal" id="simulationModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">Simulation</h2>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-iframe-container">
+                <iframe class="modal-iframe" id="modalIframe" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Fullscreen functionality
+        const fullscreenBtns = document.querySelectorAll('.fullscreen-btn');
+        const modal = document.getElementById('simulationModal');
+        const modalIframe = document.getElementById('modalIframe');
+        const modalTitle = document.getElementById('modalTitle');
+        const closeModal = document.getElementById('closeModal');
+        
+        fullscreenBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const simulationUrl = this.getAttribute('data-simulation');
+                const simulationTitle = this.closest('.simulation-window').querySelector('.simulation-title').textContent;
+                
+                modalTitle.textContent = simulationTitle;
+                modalIframe.src = simulationUrl;
+                modal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+            });
+        });
+        
+        closeModal.addEventListener('click', function() {
+            modal.style.display = 'none';
+            modalIframe.src = '';
+            document.body.style.overflow = 'auto';
+        });
+        
+        // Close modal when clicking outside content
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+                modalIframe.src = '';
+                document.body.style.overflow = 'auto';
+            }
+        });
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && modal.style.display === 'block') {
+                modal.style.display = 'none';
+                modalIframe.src = '';
+                document.body.style.overflow = 'auto';
+            }
+        });
+    </script>
+</body>
+</html>

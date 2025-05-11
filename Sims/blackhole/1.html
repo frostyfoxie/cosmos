@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Photon Gravity Simulation</title>
+
+  <style>
+
+    html, body {
+
+      margin: 0;
+
+      padding: 0;
+
+      overflow: hidden;
+
+    }
+
+    canvas {
+
+      display: block;
+
+    }
+
+    #ui {
+
+      position: absolute;
+
+      top: 10px;
+
+      left: 10px;
+
+      z-index: 10;
+
+      background: rgba(255, 255, 255, 0.8);
+
+      padding: 8px;
+
+      border-radius: 8px;
+
+      font-family: sans-serif;
+
+    }
+
+    #ui.dark {
+
+      background: rgba(0, 0, 0, 0.6);
+
+      color: white;
+
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+  <canvas id="canvas"></canvas>
+
+  <div id="ui">
+
+    <label>
+
+      <input type="checkbox" id="themeToggle" /> Toggle Light/Dark Mode
+
+    </label>
+
+  </div>
+
+  <script>
+
+    const canvas = document.getElementById('canvas');
+
+    const ctx = canvas.getContext('2d');
+
+    let width = canvas.width = window.innerWidth;
+
+    let height = canvas.height = window.innerHeight;
+
+    const maxSources = 3;
+
+    const sources = [];
+
+    const photons = [];
+
+    let darkMode = false;
+
+    const blackHole = {
+
+      x: width / 2,
+
+      y: height / 2,
+
+      mass: 50000
+
+    };
+
+    function addPhoton(source) {
+
+      const angle = Math.random() * 2 * Math.PI;
+
+      const speed = 2;
+
+      const vx = Math.cos(angle) * speed;
+
+      const vy = Math.sin(angle) * speed;
+
+      photons.push({
+
+        x: source.x,
+
+        y: source.y,
+
+        vx,
+
+        vy
+
+      });
+
+    }
+
+    function updatePhotons() {
+
+      for (let i = 0; i < photons.length; i++) {
+
+        const p = photons[i];
+
+        // Gravity from black hole
+
+        const dx = blackHole.x - p.x;
+
+        const dy = blackHole.y - p.y;
+
+        const distSq = dx * dx + dy * dy;
+
+        const dist = Math.sqrt(distSq);
+
+        const force = blackHole.mass / (distSq + 10000); // softened gravity
+
+        const ax = (dx / dist) * force;
+
+        const ay = (dy / dist) * force;
+
+        p.vx += ax;
+
+        p.vy += ay;
+
+        p.x += p.vx;
+
+        p.y += p.vy;
+
+        if (p.x < 0 || p.x > width || p.y < 0 || p.y > height) {
+
+          photons.splice(i, 1);
+
+          i--;
+
+        }
+
+      }
+
+    }
+
+    function draw() {
+
+      ctx.fillStyle = darkMode ? 'black' : 'white';
+
+      ctx.fillRect(0, 0, width, height);
+
+      // Draw black hole
+
+      ctx.beginPath();
+
+      ctx.arc(blackHole.x, blackHole.y, 20, 0, 2 * Math.PI);
+
+      ctx.fillStyle = 'black';
+
+      ctx.fill();
+
+      // Draw photons
+
+      ctx.fillStyle = darkMode ? 'white' : 'red';
+
+      for (const p of photons) {
+
+        ctx.beginPath();
+
+        ctx.arc(p.x, p.y, 1.5, 0, 2 * Math.PI);
+
+        ctx.fill();
+
+      }
+
+    }
+
+    function emitFromSources() {
+
+      for (const source of sources) {
+
+        for (let i = 0; i < 3; i++) addPhoton(source);
+
+      }
+
+    }
+
+    function animate() {
+
+      requestAnimationFrame(animate);
+
+      updatePhotons();
+
+      draw();
+
+    }
+
+    canvas.addEventListener('click', (e) => {
+
+      if (sources.length >= maxSources) sources.shift();
+
+      sources.push({ x: e.clientX, y: e.clientY });
+
+    });
+
+    document.getElementById('themeToggle').addEventListener('change', (e) => {
+
+      darkMode = e.target.checked;
+
+      document.getElementById('ui').classList.toggle('dark', darkMode);
+
+    });
+
+    setInterval(emitFromSources, 100);
+
+    animate();
+
+  </script>
+
+</body>
+
+</html>

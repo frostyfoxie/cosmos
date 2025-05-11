@@ -1,0 +1,182 @@
+// Nutshell System with Cosmic Terms Dictionary
+class NutshellSystem {
+    constructor() {
+        this.nutshellRoot = document.getElementById('nutshell-root');
+        this.currentTerm = null;
+        this.currentTermElement = null;
+        this.data = this.getCosmicTermsDictionary();
+        this.init();
+    }
+    
+    getCosmicTermsDictionary() {
+        return {
+            'black-hole': {
+                title: 'Black Hole',
+                content: `
+                    <p>A black hole is a region of spacetime where gravity is so strong that nothing—no particles or even electromagnetic radiation such as light—can escape from it.</p>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/4/4f/Black_hole_-_Messier_87_crop_max_res.jpg" alt="Black Hole">
+                    <p>The theory of general relativity predicts that a sufficiently compact mass can deform spacetime to form a black hole.</p>
+                    <p><a href="https://en.wikipedia.org/wiki/Black_hole" target="_blank">Learn more on Wikipedia</a></p>
+                `
+            },
+            'redshift': {
+                title: 'Redshift',
+                content: `
+                    <p>Redshift occurs when the light from an object is shifted to longer (redder) wavelengths, which happens when the object is moving away from the observer.</p>
+                    <p>In astronomy, redshift is used to measure the expansion of the universe and the distance to faraway galaxies.</p>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Redshift.svg/1200px-Redshift.svg.png" alt="Redshift diagram" style="max-width: 250px;">
+                `
+            },
+            'nebula': {
+                title: 'Nebula',
+                content: `
+                    <p>A nebula is a giant cloud of dust and gas in space. Some nebulae come from the gas and dust thrown out by the explosion of a dying star.</p>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/NGC_7293_%282004%29.jpg/1200px-NGC_7293_%282004%29.jpg" alt="Helix Nebula">
+                    <p>Famous nebulae include the Orion Nebula, the Helix Nebula, and the Crab Nebula.</p>
+                `
+            },
+            'causality': {
+                title: 'Causality',
+                content: `
+                    <p>Causality is the relationship between causes and effects. In physics, it's the principle that causes precede effects.</p>
+                    <p>In time travel scenarios, causality violations can create paradoxes like the grandfather paradox, where changing the past would prevent your own existence.</p>
+                `
+            },
+            'quasar': {
+                title: 'Quasar',
+                content: `
+                    <p>A quasar is an extremely luminous active galactic nucleus, powered by a supermassive black hole with mass ranging from millions to billions of solar masses.</p>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Artist%27s_rendering_ULAS_J1120%2B0641.jpg/1200px-Artist%27s_rendering_ULAS_J1120%2B0641.jpg" alt="Quasar">
+                    <p>Quasars emit energy across the electromagnetic spectrum and can be thousands of times brighter than entire galaxies.</p>
+                `
+            },
+            'gravitational-lensing': {
+                title: 'Gravitational Lensing',
+                content: `
+                    <p>Gravitational lensing is the bending of light by massive objects between the light source and the observer.</p>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Einstein_cross.jpg/1200px-Einstein_cross.jpg" alt="Einstein Cross">
+                    <p>This effect was predicted by Einstein's theory of general relativity and provides evidence for dark matter and the curvature of spacetime.</p>
+                `
+            },
+            'dark-matter': {
+                title: 'Dark Matter',
+                content: `
+                    <p>Dark matter is a form of matter thought to account for approximately 85% of the matter in the universe.</p>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Bullet_Cluster.jpg/1200px-Bullet_Cluster.jpg" alt="Bullet Cluster evidence for dark matter">
+                    <p>It doesn't emit, absorb, or reflect light, making it invisible, but its presence is inferred from gravitational effects on visible matter.</p>
+                `
+            }
+        };
+    }
+    
+    init() {
+        this.createContainer();
+        this.setupTerms();
+        this.setupCloseBehavior();
+    }
+    
+    createContainer() {
+        this.container = document.createElement('div');
+        this.container.className = 'nutshell-container';
+        this.container.innerHTML = `
+            <button class="close-btn" aria-label="Close nutshell">&times;</button>
+            <h3 class="nutshell-title"></h3>
+            <div class="nutshell-content"></div>
+        `;
+        this.nutshellRoot.appendChild(this.container);
+        
+        this.titleElement = this.container.querySelector('.nutshell-title');
+        this.contentElement = this.container.querySelector('.nutshell-content');
+        this.closeBtn = this.container.querySelector('.close-btn');
+    }
+    
+    setupTerms() {
+        document.querySelectorAll('.nutshell-term').forEach(term => {
+            term.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.showNutshell(term.dataset.term, term);
+            });
+        });
+    }
+    
+    setupCloseBehavior() {
+        // Close when clicking close button
+        this.closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.hideNutshell();
+        });
+        
+        // Close when clicking outside
+        document.addEventListener('click', () => {
+            this.hideNutshell();
+        });
+        
+        // Prevent closing when clicking inside nutshell
+        this.container.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+    }
+    
+    showNutshell(termId, termElement) {
+        if (this.currentTerm === termId) {
+            this.hideNutshell();
+            return;
+        }
+        
+        const termData = this.data[termId];
+        if (!termData) return;
+        
+        // Update active term styling
+        if (this.currentTermElement) {
+            this.currentTermElement.classList.remove('active');
+        }
+        termElement.classList.add('active');
+        this.currentTermElement = termElement;
+        
+        // Position the nutshell near the term
+        const termRect = termElement.getBoundingClientRect();
+        const containerWidth = this.container.offsetWidth;
+        const containerHeight = this.container.offsetHeight;
+        
+        // Calculate position - try to center horizontally
+        let left = termRect.left + (termRect.width /2) - (containerWidth / 2);
+        let top = termRect.bottom + 10;
+        
+        // Adjust if going off screen
+        if (left < 20) left = 20;
+        if (left + containerWidth > window.innerWidth - 20) {
+            left = window.innerWidth - containerWidth - 20;
+        }
+        
+        // If near bottom of screen, show above term
+        if (top + containerHeight > window.innerHeight - 20) {
+            top = termRect.top - containerHeight - 10;
+        }
+        
+        this.container.style.left = `${left}px`;
+        this.container.style.top = `${top}px`;
+        
+        // Update content
+        this.titleElement.textContent = termData.title;
+        this.contentElement.innerHTML = termData.content;
+        
+        // Show
+        this.container.classList.add('visible');
+        this.currentTerm = termId;
+    }
+    
+    hideNutshell() {
+        this.container.classList.remove('visible');
+        if (this.currentTermElement) {
+            this.currentTermElement.classList.remove('active');
+            this.currentTermElement = null;
+        }
+        this.currentTerm = null;
+    }
+}
+
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    new NutshellSystem();
+});
