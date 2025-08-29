@@ -86,7 +86,7 @@
         scene.add(lightPlane);
         
         // Create the point light that will change color
-        const pointLight = new THREE.PointLight(0xffffff, 2, 100); // Increased intensity to 2
+        const pointLight = new THREE.PointLight(0xffffff,1, 100); // Increased intensity to 1
         pointLight.position.set(0, 3, 0);
         pointLight.castShadow = true;
         pointLight.shadow.mapSize.width = 1024;
