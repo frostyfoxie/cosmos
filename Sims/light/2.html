@@ -132,7 +132,7 @@
         pointLight.shadow.camera.far = 50;
         scene.add(pointLight);
         
-        // Create light beam effect
+        /*
         const beamGeometry = new THREE.CylinderGeometry(1.5, 4, 12, 32);
         const beamMaterial = new THREE.MeshBasicMaterial({ 
             color: 0xffffff, 
@@ -143,7 +143,7 @@
         const lightBeam = new THREE.Mesh(beamGeometry, beamMaterial);
         lightBeam.position.set(0, 4, 0);
         lightBeam.rotation.x = Math.PI / 2;
-        scene.add(lightBeam);
+        scene.add(lightBeam);*/ 
         
         // Create the 4x4 grid of colored tiles
         const tileSize = 3;
@@ -302,9 +302,9 @@
                 tile.userData.material.needsUpdate = true;
             });
             
-            // Update light beam color with transparency
+            /* Update light beam color with transparency
             beamMaterial.color.setHex(lightHexColor);
-            beamMaterial.opacity = 0.15;
+            beamMaterial.opacity = 0.15;*/
         }
         
         // Set up button event listeners
