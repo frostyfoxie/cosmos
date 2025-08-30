@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Encryption Tool</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #4a6cf7 0%, #82a0ff 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+            padding: 25px;
+            border-radius: 12px;
+            background: #f9fafc;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        }
+        
+        h2 {
+            font-size: 1.5rem;
+            color: #4a6cf7;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        textarea, input {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        textarea:focus, input:focus {
+            outline: none;
+            border-color: #4a6cf7;
+            box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.1);
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #4a6cf7 0%, #82a0ff 100%);
+            color: white;
+            border: none;
+            padding: 14px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(74, 108, 247, 0.2);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #a0aec0 100%);
+        }
+        
+        .btn-secondary:hover {
+            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.2);
+        }
+        
+        .output {
+            background: #f8f9fa;
+            padding: 16px;
+            border-radius: 8px;
+            min-height: 120px;
+            margin-top: 15px;
+            border: 1px dashed #ddd;
+        }
+        
+        .key-info {
+            background: #e8f4ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #2c5282;
+            border-left: 4px solid #4a6cf7;
+        }
+        
+        .key-info h3 {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .flex-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .flex-group > * {
+            flex: 1;
+        }
+        
+        .help-text {
+            font-size: 13px;
+            color: #666;
+            margin-top: 6px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .security-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #4a6cf7;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            margin-left: 15px;
+        }
+        
+        .password-container {
+            position: relative;
+        }
+        
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #7d7d7d;
+        }
+        
+        @media (max-width: 768px) {
+            .flex-group {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-lock"></i> SecureText Encryptor</h1>
+            <p class="subtitle">Military-grade encryption for your sensitive messages</p>
+        </header>
+        
+        <div class="content">
+            <div class="section">
+                <h2><i class="fas fa-key"></i> Encryption Key</h2>
+                <div class="input-group">
+                    <label for="password">Enter your encryption key</label>
+                    <div class="password-container">
+                        <input type="password" id="password" placeholder="Create a strong password for encryption">
+                        <span class="toggle-password" onclick="togglePasswordVisibility('password')">
+                            <i class="fas fa-eye"></i>
+                        </span>
+                    </div>
+                    <p class="help-text">This key will be used to encrypt and decrypt your messages. Keep it secure!</p>
+                </div>
+                <button class="btn" onclick="generateKey()">
+                    <i class="fas fa-key"></i> Generate Strong Key
+                </button>
+            </div>
+            
+            <div class="section">
+                <h2><i class="fas fa-lock"></i> Encrypt Message</h2>
+                <div class="input-group">
+                    <label for="plaintext">Message to encrypt</label>
+                    <textarea id="plaintext" placeholder="Enter your sensitive text here..."></textarea>
+                </div>
+                <button class="btn" onclick="encryptMessage()">
+                    <i class="fas fa-shield-alt"></i> Encrypt Message
+                </button>
+                
+                <div class="input-group" style="margin-top: 20px;">
+                    <label for="ciphertext">Encrypted output</label>
+                    <textarea id="ciphertext" readonly placeholder="Your encrypted text will appear here..."></textarea>
+                </div>
+                <button class="btn btn-secondary" onclick="copyToClipboard('ciphertext')">
+                    <i class="fas fa-copy"></i> Copy Encrypted Text
+                </button>
+            </div>
+            
+            <div class="section">
+                <h2><i class="fas fa-unlock"></i> Decrypt Message</h2>
+                <div class="input-group">
+                    <label for="decrypt-password">Enter encryption key</label>
+                    <div class="password-container">
+                        <input type="password" id="decrypt-password" placeholder="Enter the same key used for encryption">
+                        <span class="toggle-password" onclick="togglePasswordVisibility('decrypt-password')">
+                            <i class="fas fa-eye"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label for="encryptedText">Encrypted message</label>
+                    <textarea id="encryptedText" placeholder="Paste encrypted text here..."></textarea>
+                </div>
+                <button class="btn" onclick="decryptMessage()">
+                    <i class="fas fa-unlock-alt"></i> Decrypt Message
+                </button>
+                
+                <div class="input-group" style="margin-top: 20px;">
+                    <label for="decryptedText">Decrypted output</label>
+                    <textarea id="decryptedText" readonly placeholder="Your decrypted text will appear here..."></textarea>
+                </div>
+            </div>
+            
+            <div class="key-info">
+                <h3><i class="fas fa-info-circle"></i> How it works</h3>
+                <p>Your text is encrypted using AES-256 encryption, one of the most secure algorithms available. The encryption key you provide is strengthened using industry-standard key derivation techniques. For maximum security, use a long, complex key and never share it with others.</p>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>SecureText Encryptor &bull; Your text is encrypted locally in your browser</p>
+    </footer>
+
+    <script>
+        // Toggle password visibility
+        function togglePasswordVisibility(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = input.nextElementSibling.querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+        
+        // Generate a strong random key
+        function generateKey() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_-+=';
+            let key = '';
+            for (let i = 0; i < 16; i++) {
+                key += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            document.getElementById('password').value = key;
+            document.getElementById('decrypt-password').value = key;
+        }
+        
+        // Copy text to clipboard
+        function copyToClipboard(elementId) {
+            const textarea = document.getElementById(elementId);
+            textarea.select();
+            document.execCommand('copy');
+            alert('Copied to clipboard!');
+        }
+        
+        // Encrypt message
+        async function encryptMessage() {
+            const password = document.getElementById('password').value;
+            const plaintext = document.getElementById('plaintext').value;
+            
+            if (!password) {
+                alert('Please create an encryption key first');
+                return;
+            }
+            
+            if (!plaintext) {
+                alert('Please enter a message to encrypt');
+                return;
+            }
+            
+            try {
+                // Generate a random salt
+                const salt = crypto.getRandomValues(new Uint8Array(16));
+                
+                // Derive a key from the password
+                const keyMaterial = await crypto.subtle.importKey(
+                    'raw',
+                    new TextEncoder().encode(password),
+                    { name: 'PBKDF2' },
+                    false,
+                    ['deriveKey']
+                );
+                
+                const key = await crypto.subtle.deriveKey(
+                    {
+                        name: 'PBKDF2',
+                        salt: salt,
+                        iterations: 100000,
+                        hash: 'SHA-256'
+                    },
+                    keyMaterial,
+                    { name: 'AES-GCM', length: 256 },
+                    false,
+                    ['encrypt']
+                );
+                
+                // Generate a random IV
+                const iv = crypto.getRandomValues(new Uint8Array(12));
+                
+                // Encrypt the data
+                const encryptedData = await crypto.subtle.encrypt(
+                    {
+                        name: 'AES-GCM',
+                        iv: iv
+                    },
+                    key,
+                    new TextEncoder().encode(plaintext)
+                );
+                
+                // Combine salt + iv + encrypted data
+                const combined = new Uint8Array(salt.length + iv.length + encryptedData.byteLength);
+                combined.set(salt, 0);
+                combined.set(iv, salt.length);
+                combined.set(new Uint8Array(encryptedData), salt.length + iv.length);
+                
+                // Convert to base64 for display
+                const base64Data = btoa(String.fromCharCode(...combined));
+                document.getElementById('ciphertext').value = base64Data;
+                document.getElementById('encryptedText').value = base64Data;
+            } catch (error) {
+                console.error('Encryption error:', error);
+                alert('Encryption failed: ' + error.message);
+            }
+        }
+        
+        // Decrypt message
+        async function decryptMessage() {
+            const password = document.getElementById('decrypt-password').value;
+            const encryptedText = document.getElementById('encryptedText').value;
+            
+            if (!password) {
+                alert('Please enter your encryption key');
+                return;
+            }
+            
+            if (!encryptedText) {
+                alert('Please enter encrypted text to decrypt');
+                return;
+            }
+            
+            try {
+                // Convert from base64
+                const binaryData = atob(encryptedText);
+                const data = new Uint8Array(binaryData.length);
+                for (let i = 0; i < binaryData.length; i++) {
+                    data[i] = binaryData.charCodeAt(i);
+                }
+                
+                // Extract salt, IV, and encrypted data
+                const salt = data.slice(0, 16);
+                const iv = data.slice(16, 28);
+                const encryptedData = data.slice(28);
+                
+                // Derive the key from the password
+                const keyMaterial = await crypto.subtle.importKey(
+                    'raw',
+                    new TextEncoder().encode(password),
+                    { name: 'PBKDF2' },
+                    false,
+                    ['deriveKey']
+                );
+                
+                const key = await crypto.subtle.deriveKey(
+                    {
+                        name: 'PBKDF2',
+                        salt: salt,
+                        iterations: 100000,
+                        hash: 'SHA-256'
+                    },
+                    keyMaterial,
+                    { name: 'AES-GCM', length: 256 },
+                    false,
+                    ['decrypt']
+                );
+                
+                // Decrypt the data
+                const decryptedData = await crypto.subtle.decrypt(
+                    {
+                        name: 'AES-GCM',
+                        iv: iv
+                    },
+                    key,
+                    encryptedData
+                );
+                
+                // Convert to text
+                const decryptedText = new TextDecoder().decode(decryptedData);
+                document.getElementById('decryptedText').value = decryptedText;
+            } catch (error) {
+                console.error('Decryption error:', error);
+                alert('Decryption failed. Please check your encryption key and input text.');
+            }
+        }
+        
+        // Initialize with a generated key
+        window.onload = generateKey;
+    </script>
+</body>
+</html>
