@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Handwritten Links - URL Shortener</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAOW002gaowNIsHLtJlMFPYnCRzbJjp-to",
+            authDomain: "handwritten-links.firebaseapp.com",
+            databaseURL: "https://handwritten-links-default-rtdb.firebaseio.com",
+            projectId: "handwritten-links",
+            storageBucket: "handwritten-links.firebasestorage.app",
+            messagingSenderId: "183734696781",
+            appId: "1:183734696781:web:35a4069bf68ab1d6291504",
+            measurementId: "G-PG4DF0HRL1"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+    </script>
+    <style>
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #0ea5e9 0%, #7e22ce 100%);
+        }
+        .code-input {
+            text-transform: uppercase;
+        }
+        .file-section {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 transition-colors duration-300 min-h-screen">
+    <!-- Header -->
+    <header class="gradient-bg text-white shadow-lg">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-link text-2xl"></i>
+                    <h1 class="text-2xl font-bold">Handwritten Links</h1>
+                </div>
+                <button id="theme-toggle" class="p-2 rounded-full bg-white/20 hover:bg-white/30 transition">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+            <p class="mt-2 text-white/80">Shorten your long URLs to handwritten codes</p>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- Tabs -->
+        <div class="flex mb-6 border-b border-gray-200 dark:border-gray-700">
+            <button id="url-tab" class="px-4 py-2 font-medium text-primary-600 dark:text-primary-400 border-b-2 border-primary-500">URL Shortener</button>
+            <button id="file-tab" class="px-4 py-2 font-medium text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">File Upload</button>
+        </div>
+
+        <!-- URL Shortener Section -->
+        <section id="url-section" class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-8 fade-in">
+            <h2 class="text-2xl font-bold mb-6 text-primary-600 dark:text-primary-400 flex items-center">
+                <i class="fas fa-compress-alt mr-2"></i> Shorten a URL
+            </h2>
+            
+            <div class="mb-6">
+                <label for="url-input" class="block text-sm font-medium mb-2">Enter your long URL</label>
+                <input type="url" id="url-input" placeholder="https://example.com/very/long/url" 
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700">
+            </div>
+            
+            <div class="mb-6">
+                <label class="block text-sm font-medium mb-2">Expiration time</label>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <button class="expiration-btn bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 border-2 border-primary-300 dark:border-primary-700 py-2 px-4 rounded-lg font-medium transition-all" data-days="30" data-text="1 month">
+                        1 Month
+                    </button>
+                    <button class="expiration-btn bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 py-2 px-4 rounded-lg font-medium transition-all" data-days="180" data-text="6 months">
+                        6 Months
+                    </button>
+                    <button class="expiration-btn bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 py-2 px-4 rounded-lg font-medium transition-all" data-days="365" data-text="1 year">
+                        1 Year
+                    </button>
+                    <button class="expiration-btn bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 py-2 px-4 rounded-lg font-medium transition-all" data-days="0" data-text="forever">
+                        Forever
+                    </button>
+                </div>
+            </div>
+            
+            <button id="shorten-btn" class="w-full gradient-bg text-white py-3 px-4 rounded-lg font-bold shadow-md hover:opacity-90 transition">
+                <i class="fas fa-magic mr-2"></i> Generate Short Code
+            </button>
+        </section>
+
+        <!-- File Upload Section -->
+        <section id="file-section" class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-8 fade-in">
+            <h2 class="text-2xl font-bold mb-6 text-primary-600 dark:text-primary-400 flex items-center">
+                <i class="fas fa-file-upload mr-2"></i> Upload a File
+            </h2>
+            
+            <div class="mb-6">
+                <label for="file-input" class="block text-sm font-medium mb-2">Select a file to upload</label>
+                <input type="file" id="file-input" 
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700">
+            </div>
+            
+            <div class="mb-6">
+                <label class="block text-sm font-medium mb-2">File expires after 1 week</label>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Files are converted to text format and automatically deleted after 7 days.</p>
+            </div>
+            
+            <button id="upload-btn" class="w-full gradient-bg text-white py-3 px-4 rounded-lg font-bold shadow-md hover:opacity-90 transition">
+                <i class="fas fa-cloud-upload-alt mr-2"></i> Upload File & Generate Code
+            </button>
+        </section>
+
+        <!-- Result Section (Initially Hidden) -->
+        <section id="result-section" class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-8 hidden fade-in">
+            <h2 class="text-2xl font-bold mb-6 text-primary-600 dark:text-primary-400 flex items-center">
+                <i class="fas fa-qrcode mr-2"></i> Your Short Code
+            </h2>
+            
+            <div class="bg-gray-100 dark:bg-gray-700 p-6 rounded-lg mb-6">
+                <div class="flex justify-center space-x-4 mb-6">
+                    <div class="text-center">
+                        <div class="text-sm font-medium mb-2">First 3 Letters</div>
+                        <div class="flex space-x-3">
+                            <div class="w-12 h-12 rounded-lg bg-primary-500 text-white flex items-center justify-center text-xl font-bold shadow-md" id="letter1">A</div>
+                            <div class="w-12 h-12 rounded-lg bg-primary-500 text-white flex items-center justify-center text-xl font-bold shadow-md" id="letter2">B</div>
+                            <div class="w-12 h-12 rounded-lg bg-primary-500 text-white flex items-center justify-center text-xl font-bold shadow-md" id="letter3">C</div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="text-sm font-medium mb-2">Last 3 Letters</div>
+                        <div class="flex space-x-3">
+                            <div class="w-12 h-12 rounded-lg bg-primary-500 text-white flex items-center justify-center text-xl font-bold shadow-md" id="letter4">X</div>
+                            <div class="w-12 h-12 rounded-lg bg-primary-500 text-white flex items-center justify-center text-xl font-bold shadow-md" id="letter5">Y</div>
+                            <div class="w-12 h-12 rounded-lg bg-primary-500 text-white flex items-center justify-center text-xl font-bold shadow-md" id="letter6">Z</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center">
+                    <p class="text-sm mb-2">Your <span id="content-type">URL</span> expires: <span id="expiration-time" class="font-medium">in 30 days</span></p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Write down these 6 letters to access your <span id="content-type-2">URL</span> later</p>
+                </div>
+            </div>
+            
+            <div class="flex justify-center">
+                <button id="new-content-btn" class="bg-primary-500 hover:bg-primary-600 text-white py-2 px-6 rounded-lg font-medium transition">
+                    <i class="fas fa-plus mr-2"></i> New <span id="content-type-3">URL</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- URL Retriever Section -->
+        <section class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-8 fade-in">
+            <h2 class="text-2xl font-bold mb-6 text-primary-600 dark:text-primary-400 flex items-center">
+                <i class="fas fa-external-link-alt mr-2"></i> Retrieve Content
+            </h2>
+            
+            <div class="mb-6">
+                <label class="block text-sm font-medium mb-2">Enter your 6-letter code</label>
+                <div class="flex space-x-3 justify-center mb-4">
+                    <input type="text" maxlength="1" class="code-input w-12 h-12 text-center text-xl font-bold rounded-lg border-2 border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700" id="code1">
+                    <input type="text" maxlength="1" class="code-input w-12 h-12 text-center text-xl font-bold rounded-lg border-2 border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700" id="code2">
+                    <input type="text" maxlength="1" class="code-input w-12 h-12 text-center text-xl font-bold rounded-lg border-2 border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700" id="code3">
+                    <span class="self-center text-xl">-</span>
+                    <input type="text" maxlength="1" class="code-input w-12 h-12 text-center text-xl font-bold rounded-lg border-2 border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700" id="code4">
+                    <input type="text" maxlength="1" class="code-input w-12 h-12 text-center text-xl font-bold rounded-lg border-2 border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700" id="code5">
+                    <input type="text" maxlength="1" class="code-input w-12 h-12 text-center text-xl font-bold rounded-lg border-2 border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700" id="code6">
+                </div>
+            </div>
+            
+            <button id="retrieve-btn" class="w-full bg-primary-500 hover:bg-primary-600 text-white py-3 px-4 rounded-lg font-bold shadow-md transition">
+                <i class="fas fa-search mr-2"></i> Retrieve Content
+            </button>
+
+            <div id="retrieved-url-container" class="mt-6 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg hidden">
+                <p class="text-sm font-medium mb-2">Retrieved URL:</p>
+                <a id="retrieved-url" href="#" target="_blank" class="text-primary-600 dark:text-primary-400 break-all"></a>
+            </div>
+
+            <div id="retrieved-file-container" class="mt-6 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg hidden">
+                <p class="text-sm font-medium mb-2">Retrieved File:</p>
+                <p id="file-info" class="text-sm mb-2"></p>
+                <button id="download-btn" class="bg-primary-500 hover:bg-primary-600 text-white py-2 px-4 rounded-lg font-medium transition">
+                    <i class="fas fa-download mr-2"></i> Download File
+                </button>
+            </div>
+        </section>
+
+        <!-- How It Works Section -->
+        <section class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 fade-in">
+            <h2 class="text-2xl font-bold mb-6 text-primary-600 dark:text-primary-400 flex items-center">
+                <i class="fas fa-info-circle mr-2"></i> How It Works
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-gray-50 dark:bg-gray-700 p-5 rounded-lg">
+                    <div class="w-12 h-12 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 flex items-center justify-center text-xl mb-4">
+                        1
+                    </div>
+                    <h3 class="font-bold mb-2">Paste Your URL or Upload File</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-300">Enter any long URL or upload a file that you want to shorten for handwritten notes.</p>
+                </div>
+                
+                <div class="bg-gray-50 dark:bg-gray-700 p-5 rounded-lg">
+                    <div class="w-12 h-12 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 flex items-center justify-center text-xl mb-4">
+                        2
+                    </div>
+                    <h3 class="font-bold mb-2">Get 6-Letter Code</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-300">We generate a simple 6-letter code that you can write down easily.</p>
+                </div>
+                
+                <div class="bg-gray-50 dark:bg-gray-700 p-5 rounded-lg">
+                    <div class="w-12 h-12 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 flex items-center justify-center text-xl mb-4">
+                        3
+                    </div>
+                    <h3 class="font-bold mb-2">Retrieve Anywhere</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-300">Enter the code on any device to access your original URL or file.</p>
+                </div>
+            </div>
+            
+            <div class="mt-8 bg-primary-50 dark:bg-primary-900/20 border-l-4 border-primary-500 p-4 rounded-r-lg">
+                <p class="text-sm text-primary-700 dark:text-primary-300">
+                    <i class="fas fa-lightbulb mr-2"></i> Perfect for including URLs or files in handwritten notes, journals, or whiteboards without needing to write long complicated addresses.
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="mt-12 py-6 bg-gray-100 dark:bg-gray-800 text-center text-sm text-gray-600 dark:text-gray-400">
+        <p>© 2023 Handwritten Links. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = themeToggle.querySelector('i');
+        
+        // Check for saved theme preference or use OS preference
+        if (localStorage.getItem('color-theme') === 'dark' || 
+            (!localStorage.getItem('color-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+            themeIcon.classList.remove('fa-moon');
+            themeIcon.classList.add('fa-sun');
+        } else {
+            document.documentElement.classList.remove('dark');
+            themeIcon.classList.remove('fa-sun');
+            themeIcon.classList.add('fa-moon');
+        }
+        
+        themeToggle.addEventListener('click', function() {
+            // Toggle theme
+            document.documentElement.classList.toggle('dark');
+            
+            // Update icon
+            if (themeIcon.classList.contains('fa-moon')) {
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+            } else {
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+            }
+            
+            // Save preference
+            if (document.documentElement.classList.contains('dark')) {
+                localStorage.setItem('color-theme', 'dark');
+            } else {
+                localStorage.setItem('color-theme', 'light');
+            }
+        });
+        
+        // Tab functionality
+        const urlTab = document.getElementById('url-tab');
+        const fileTab = document.getElementById('file-tab');
+        const urlSection = document.getElementById('url-section');
+        const fileSection = document.getElementById('file-section');
+        
+        urlTab.addEventListener('click', () => {
+            urlSection.style.display = 'block';
+            fileSection.style.display = 'none';
+            urlTab.classList.add('text-primary-600', 'dark:text-primary-400', 'border-primary-500');
+            urlTab.classList.remove('text-gray-500', 'dark:text-gray-400');
+            fileTab.classList.remove('text-primary-600', 'dark:text-primary-400', 'border-primary-500');
+            fileTab.classList.add('text-gray-500', 'dark:text-gray-400');
+        });
+        
+        fileTab.addEventListener('click', () => {
+            urlSection.style.display = 'none';
+            fileSection.style.display = 'block';
+            fileTab.classList.add('text-primary-600', 'dark:text-primary-400', 'border-primary-500');
+            fileTab.classList.remove('text-gray-500', 'dark:text-gray-400');
+            urlTab.classList.remove('text-primary-600', 'dark:text-primary-400', 'border-primary-500');
+            urlTab.classList.add('text-gray-500', 'dark:text-gray-400');
+        });
+        
+        // Expiration buttons
+        const expirationButtons = document.querySelectorAll('.expiration-btn');
+        let selectedExpiration = {days: 30, text: "1 month"}; // Default
+        
+        expirationButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons
+                expirationButtons.forEach(btn => {
+                    btn.classList.remove('bg-primary-100', 'dark:bg-primary-900/30', 'text-primary-700', 'dark:text-primary-300', 'border-2', 'border-primary-300', 'dark:border-primary-700');
+                    btn.classList.add('bg-gray-100', 'dark:bg-gray-700', 'hover:bg-gray-200', 'dark:hover:bg-gray-600');
+                });
+                
+                // Add active class to clicked button
+                button.classList.remove('bg-gray-100', 'dark:bg-gray-700', 'hover:bg-gray-200', 'dark:hover:bg-gray-600');
+                button.classList.add('bg-primary-100', 'dark:bg-primary-900/30', 'text-primary-700', 'dark:text-primary-300', 'border-2', 'border-primary-300', 'dark:border-primary-700');
+                
+                // Store selected expiration
+                selectedExpiration = {
+                    days: parseInt(button.getAttribute('data-days')),
+                    text: button.getAttribute('data-text')
+                };
+            });
+        });
+        
+        // Set default expiration button as active
+        window.addEventListener('load', () => {
+            expirationButtons[0].click();
+        });
+        
+        // Generate random letters
+        function generateRandomLetters() {
+            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            let result = '';
+            for (let i = 0; i < 6; i++) {
+                result += letters.charAt(Math.floor(Math.random() * letters.length));
+            }
+            return result;
+        }
+        
+        // Convert file to Base64 text
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+        
+        // Convert Base64 back to file
+        function base64ToFile(base64, filename) {
+            const arr = base64.split(',');
+            const mime = arr[0].match(/:(.*?);/)[1];
+            const bstr = atob(arr[1]);
+            let n = bstr.length;
+            const u8arr = new Uint8Array(n);
+            
+            while(n--){
+                u8arr[n] = bstr.charCodeAt(n);
+            }
+            
+            return new File([u8arr], filename, {type: mime});
+        }
+        
+        // Shorten URL functionality
+        document.getElementById('shorten-btn').addEventListener('click', () => {
+            const urlInput = document.getElementById('url-input');
+            if (!urlInput.value) {
+                alert('Please enter a URL');
+                return;
+            }
+            
+            // Generate random code
+            const code = generateRandomLetters();
+            
+            // Display the code
+            for (let i = 0; i < 6; i++) {
+                document.getElementById(`letter${i+1}`).textContent = code[i];
+            }
+            
+            // Update expiration text
+            const expirationText = selectedExpiration.days === 0 ? 
+                "never" : `in ${selectedExpiration.text}`;
+            document.getElementById('expiration-time').textContent = expirationText;
+            
+            // Update content type text
+            document.getElementById('content-type').textContent = 'URL';
+            document.getElementById('content-type-2').textContent = 'URL';
+            document.getElementById('content-type-3').textContent = 'URL';
+            
+            // Show result section
+            document.getElementById('result-section').classList.remove('hidden');
+            
+            // Scroll to result section
+            document.getElementById('result-section').scrollIntoView({ behavior: 'smooth' });
+            
+            // Save to Firebase
+            const urlData = {
+                type: 'url',
+                content: urlInput.value,
+                createdAt: new Date().toISOString(),
+                expiresIn: selectedExpiration.days
+            };
+
+            database.ref('urls/' + code).set(urlData)
+                .then(() => {
+                    console.log('URL saved successfully!');
+                })
+                .catch((error) => {
+                    console.error('Error saving URL:', error);
+                });
+        });
+        
+        // File upload functionality
+        document.getElementById('upload-btn').addEventListener('click', async () => {
+            const fileInput = document.getElementById('file-input');
+            if (!fileInput.files || fileInput.files.length === 0) {
+                alert('Please select a file');
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            
+            // Generate random code
+            const code = generateRandomLetters();
+            
+            // Display the code
+            for (let i = 0; i < 6; i++) {
+                document.getElementById(`letter${i+1}`).textContent = code[i];
+            }
+            
+            // Update expiration text (always 7 days for files)
+            document.getElementById('expiration-time').textContent = 'in 7 days';
+            
+            // Update content type text
+            document.getElementById('content-type').textContent = 'file';
+            document.getElementById('content-type-2').textContent = 'file';
+            document.getElementById('content-type-3').textContent = 'file';
+            
+            // Show result section
+            document.getElementById('result-section').classList.remove('hidden');
+            
+            // Scroll to result section
+            document.getElementById('result-section').scrollIntoView({ behavior: 'smooth' });
+            
+            try {
+                // Convert file to Base64
+                const base64 = await fileToBase64(file);
+                
+                // Save to Firebase
+                const fileData = {
+                    type: 'file',
+                    content: base64,
+                    filename: file.name,
+                    filetype: file.type,
+                    createdAt: new Date().toISOString(),
+                    expiresIn: 7 // Files expire after 7 days
+                };
+
+                database.ref('urls/' + code).set(fileData)
+                    .then(() => {
+                        console.log('File saved successfully!');
+                    })
+                    .catch((error) => {
+                        console.error('Error saving file:', error);
+                    });
+            } catch (error) {
+                console.error('Error converting file:', error);
+                alert('Error uploading file. Please try again.');
+            }
+        });
+        
+        // New content button
+        document.getElementById('new-content-btn').addEventListener('click', () => {
+            document.getElementById('url-input').value = '';
+            document.getElementById('file-input').value = '';
+            document.getElementById('result-section').classList.add('hidden');
+            
+            // Scroll to input section
+            document.querySelector('section').scrollIntoView({ behavior: 'smooth' });
+        });
+        
+        // Input auto-tab functionality for code retrieval
+        const codeInputs = document.querySelectorAll('.code-input');
+        codeInputs.forEach((input, index) => {
+            input.addEventListener('input', (e) => {
+                // Convert to uppercase
+                input.value = input.value.toUpperCase();
+                
+                if (input.value.length === 1) {
+                    if (index < codeInputs.length - 1) {
+                        codeInputs[index + 1].focus();
+                    }
+                }
+            });
+            
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && !input.value && index > 0) {
+                    codeInputs[index - 1].focus();
+                }
+            });
+        });
+        
+        // Retrieve content functionality
+        document.getElementById('retrieve-btn').addEventListener('click', async () => {
+            let code = '';
+            for (let i = 1; i <= 6; i++) {
+                const inputValue = document.getElementById(`code${i}`).value;
+                if (!inputValue) {
+                    alert('Please enter the complete 6-letter code');
+                    return;
+                }
+                code += inputValue;
+            }
+            
+            // Retrieve from Firebase
+            try {
+                const snapshot = await database.ref('urls/' + code).once('value');
+                const data = snapshot.val();
+                
+                if (!data) {
+                    alert('No content found for this code');
+                    return;
+                }
+                
+                // Check if content has expired
+                const createdAt = new Date(data.createdAt);
+                const expiresIn = data.expiresIn;
+                const expirationDate = new Date(createdAt.getTime() + (expiresIn * 24 * 60 * 60 * 1000));
+                
+                if (expiresIn > 0 && new Date() > expirationDate) {
+                    alert('This code has expired');
+                    // Delete expired content
+                    database.ref('urls/' + code).remove();
+                    return;
+                }
+                
+                if (data.type === 'url') {
+                    // Show URL
+                    document.getElementById('retrieved-url').textContent = data.content;
+                    document.getElementById('retrieved-url').href = data.content;
+                    document.getElementById('retrieved-url-container').classList.remove('hidden');
+                    document.getElementById('retrieved-file-container').classList.add('hidden');
+                } else if (data.type === 'file') {
+                    // Show file download option
+                    document.getElementById('file-info').textContent = `Filename: ${data.filename} (${data.filetype})`;
+                    document.getElementById('retrieved-file-container').classList.remove('hidden');
+                    document.getElementById('retrieved-url-container').classList.add('hidden');
+                    
+                    // Set up download button
+                    document.getElementById('download-btn').onclick = () => {
+                        const file = base64ToFile(data.content, data.filename);
+                        const url = URL.createObjectURL(file);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = data.filename;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                    };
+                }
+            } catch (error) {
+                console.error('Error retrieving content:', error);
+                alert('Error retrieving content. Please try again.');
+            }
+        });
+        
+        // Clean up expired content on load
+        function cleanupExpiredContent() {
+            database.ref('urls').once('value').then((snapshot) => {
+                const now = new Date();
+                snapshot.forEach((childSnapshot) => {
+                    const data = childSnapshot.val();
+                    const createdAt = new Date(data.createdAt);
+                    const expiresIn = data.expiresIn;
+                    
+                    if (expiresIn > 0) {
+                        const expirationDate = new Date(createdAt.getTime() + (expiresIn * 24 * 60 * 60 * 1000));
+                        if (now > expirationDate) {
+                            // Delete expired content
+                            database.ref('urls/' + childSnapshot.key).remove();
+                        }
+                    }
+                });
+            });
+        }
+        
+        // Run cleanup on load
+        window.addEventListener('load', cleanupExpiredContent);
+    </script>
+</body>
+</html>
