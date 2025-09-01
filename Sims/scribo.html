@@ -89,7 +89,7 @@
     <main class="container mx-auto px-4 py-8 max-w-4xl">
         <!-- Tabs -->
         <div class="flex mb-6 border-b border-gray-200 dark:border-gray-700">
-            <button id="url-tab" class="px-4 py-2 font-medium text-primary-600 dark:text-primary-400 border-b-2 border-primary-500" id="defaultOpen">URL Shortener</button>
+            <button id="url-tab" class="px-4 py-2 font-medium text-primary-600 dark:text-primary-400 border-b-2 border-primary-500">URL Shortener</button>
             <button id="file-tab" class="px-4 py-2 font-medium text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">File Upload</button>
         </div>
 
@@ -136,8 +136,8 @@
             
             <div class="mb-6">
                 <label for="file-input" class="block text-sm font-medium mb-2">Select a file to upload</label>
-                <input type="file" id="file-input" 
-                    class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700">
+                <input type="file" id="file-input" class="w-full gradient-bg text-white py-3 px-4 rounded-lg font-bold shadow-md hover:opacity-90 transition">
+                    
             </div>
             
             <div class="mb-6">
@@ -268,6 +268,7 @@
     </main>
 
     <script>
+        document.getElementById("url-tab").click()
         // Theme toggle functionality
         const themeToggle = document.getElementById('theme-toggle');
         const themeIcon = themeToggle.querySelector('i');
