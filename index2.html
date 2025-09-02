@@ -113,7 +113,7 @@
   </head>
   <body class="bg-gray-50 text-slate-800">
     <!-- Interactive Header with Orbs -->
-    <header class="relative overflow-hidden w-full h-100 flex items-center justify-center p-6 sm:p-12">
+    <header class="relative overflow-hidden w-full h-80 flex items-center justify-center p-6 sm:p-12">
       <div class="interactive-background">
         <canvas id="ripple-canvas" class="absolute top-0 left-0 w-full h-full"></canvas>
         <div id="orb-container">
@@ -359,5 +359,223 @@
         </a>
       </div>
     </section>
+
+    <script>
+      // Interactive orb animation
+      const orbContainer = document.getElementById('orb-container');
+      const orbs = document.querySelectorAll('.orb');
+
+      document.addEventListener('mousemove', (e) => {
+        const x = e.clientX;
+        const y = e.clientY;
+
+        orbs.forEach(orb => {
+          const speed = parseFloat(orb.dataset.speed) || 0.05;
+          const offsetX = (x - window.innerWidth / 2) * speed;
+          const offsetY = (y - window.innerHeight / 2) * speed;
+          orb.style.transform = `translate(calc(-50% + ${offsetX}px), calc(-50% + ${offsetY}px))`;
+        });
+      });
+
+      // Blog filtering functionality
+      document.addEventListener('DOMContentLoaded', () => {
+        const blogGrid = document.getElementById('blog-grid');
+        const filterContainer = document.getElementById('filter-container');
+        const blogCards = document.querySelectorAll('.blog-card');
+        const allTags = new Set();
+
+        // Collect all unique tags
+        blogCards.forEach(card => {
+          const tags = card.getAttribute('data-tags').split(',');
+          tags.forEach(tag => allTags.add(tag.trim()));
+        });
+
+        // Create filter buttons
+        allTags.forEach(tag => {
+          const button = document.createElement('button');
+          button.textContent = tag;
+          button.className = 'filter-btn bg-white text-gray-800 px-4 py-2 rounded-full shadow-sm border border-gray-200 transition-all hover:bg-gray-100 focus:outline-none focus:ring focus:ring-blue-300';
+          button.setAttribute('data-filter', tag);
+          filterContainer.appendChild(button);
+        });
+
+        // Add event listener to filter buttons
+        filterContainer.addEventListener('click', (e) => {
+          if (e.target.matches('.filter-btn')) {
+            const filterTag = e.target.getAttribute('data-filter');
+
+            // Toggle active class
+            filterContainer.querySelectorAll('.filter-btn').forEach(btn => {
+              btn.classList.remove('bg-gray-800', 'text-white', 'hover:bg-gray-700');
+              btn.classList.add('bg-white', 'text-gray-800', 'hover:bg-gray-100');
+            });
+            e.target.classList.remove('bg-white', 'text-gray-800', 'hover:bg-gray-100');
+            e.target.classList.add('bg-gray-800', 'text-white', 'hover:bg-gray-700');
+
+            // Show/hide cards based on filter
+            blogCards.forEach(card => {
+              const tags = card.getAttribute('data-tags').split(',').map(tag => tag.trim());
+              card.classList.remove('card-pop-in'); // Remove animation class to reset
+              
+              if (filterTag === 'all' || tags.includes(filterTag)) {
+                card.style.display = 'block';
+                // Add a slight delay to re-trigger the animation
+                setTimeout(() => {
+                    card.classList.add('card-pop-in');
+                }, 10);
+              } else {
+                card.style.display = 'none';
+              }
+            });
+          }
+        });
+
+        // Set 'All' button as active by default
+        const allButton = filterContainer.querySelector('[data-filter="all"]');
+        if (allButton) {
+            allButton.classList.add('bg-gray-800', 'text-white', 'hover:bg-gray-700');
+        }
+
+        // Initial animation for all cards on page load
+        blogCards.forEach((card, index) => {
+            setTimeout(() => {
+                card.classList.add('card-pop-in');
+            }, index * 100);
+        });
+      });
+
+      // --- Canvas-based Ripple Animation ---
+      const canvas = document.getElementById('ripple-canvas');
+      const ctx = canvas.getContext('2d');
+      let ripples = [];
+      let grid = [];
+      const GRID_SPACING = 30; // Spacing between grid points
+
+      // Function to resize canvas
+      function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        generateGrid();
+      }
+
+      // Generate the grid points
+      function generateGrid() {
+        grid = [];
+        for (let x = 0; x < canvas.width; x += GRID_SPACING) {
+          for (let y = 0; y < canvas.height; y += GRID_SPACING) {
+            grid.push({
+              x: x,
+              y: y,
+              z: 0 // Z-axis displacement
+            });
+          }
+        }
+      }
+
+      // Handle user clicks to create ripples
+      canvas.addEventListener('click', (e) => {
+        ripples.push({
+          x: e.clientX,
+          y: e.clientY,
+          radius: 0,
+          maxRadius: 200,
+          speed: 10,
+          intensity: 20,
+          opacity: 1
+        });
+      });
+      
+      // Handle touch events
+      canvas.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        const touch = e.touches[0];
+        ripples.push({
+          x: touch.clientX,
+          y: touch.clientY,
+          radius: 0,
+          maxRadius: 200,
+          speed: 10,
+          intensity: 20,
+          opacity: 1
+        });
+      });
+
+
+      // Main animation loop
+      function animate() {
+        // Clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Update and draw ripples
+        ripples.forEach((ripple, index) => {
+          ripple.radius += ripple.speed;
+          ripple.opacity = 1 - (ripple.radius / ripple.maxRadius);
+
+          // Remove old ripples
+          if (ripple.radius > ripple.maxRadius) {
+            ripples.splice(index, 1);
+          }
+        });
+
+        // Draw grid
+        ctx.strokeStyle = "rgba(0, 0, 0, 0.05)";
+        ctx.lineWidth = 1;
+
+        // Animate grid points
+        grid.forEach(point => {
+          let totalDisplacement = 0;
+          ripples.forEach(ripple => {
+            const dx = point.x - ripple.x;
+            const dy = point.y - ripple.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < ripple.maxRadius) {
+              const effect = Math.sin(distance / (ripple.radius * 0.5) * Math.PI) * ripple.intensity * ripple.opacity;
+              totalDisplacement += effect;
+            }
+          });
+          point.z = totalDisplacement;
+        });
+
+        // Draw lines
+        for (let x = 0; x < canvas.width; x += GRID_SPACING) {
+          ctx.beginPath();
+          for (let y = 0; y < canvas.height; y += GRID_SPACING) {
+            const point = grid.find(p => p.x === x && p.y === y);
+            const yOffset = point.z;
+            if (y === 0) {
+              ctx.moveTo(x, y + yOffset);
+            } else {
+              ctx.lineTo(x, y + yOffset);
+            }
+          }
+          ctx.stroke();
+        }
+
+        for (let y = 0; y < canvas.height; y += GRID_SPACING) {
+          ctx.beginPath();
+          for (let x = 0; x < canvas.width; x += GRID_SPACING) {
+            const point = grid.find(p => p.x === x && p.y === y);
+            const yOffset = point.z;
+            if (x === 0) {
+              ctx.moveTo(x, y + yOffset);
+            } else {
+              ctx.lineTo(x, y + yOffset);
+            }
+          }
+          ctx.stroke();
+        }
+
+        requestAnimationFrame(animate);
+      }
+
+      // Start the animations
+      window.addEventListener('load', () => {
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        animate();
+      });
+
+    </script>
   </body>
 </html>
