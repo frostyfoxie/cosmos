@@ -51,40 +51,9 @@ header {
     height: 100%;
     background: var(--cosmic-blue);
     backdrop-filter: blur(5px);
-    z-index: 1;
+    z-index:1;
 }
-      .orb {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        border-radius: 50%;
-        filter: blur(80px);
-        opacity: 0.6;
-        transition: transform 0.5s ease-out;
-      }
-      .orb-1 {
-        width: 350px;
-        height: 350px;
-        background: radial-gradient(#6366f1, #c7d2fe);
-      }
-      .orb-2 {
-        width: 450px;
-        height: 450px;
-        background: radial-gradient(#a5b4fc, #e0e7ff);
-      }
-      .orb-3 {
-        width: 500px;
-        height: 500px;
-        background: radial-gradient(#d1d5db, #f3f4f6);
-      }
-      
-      .orb-4 {
-        width: 250px;
-        height: 250px;
-        background: radial-gradient(#9ca3af, #d1d5db);
-      }
-      .description-truncate {
+.description-truncate {
         display: -webkit-box;
         -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
@@ -147,7 +116,7 @@ header {
     </header>
 
     <!-- Main Content -->
-    <main class="container mx-auto px-4 py-8">
+    <main class="container mx-auto px-4 py-8 padding-0-50px">
       
       <!-- Filter Buttons -->
       <div id="filter-container" class="flex flex-wrap gap-2 justify-center mb-8">
