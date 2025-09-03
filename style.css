@@ -1,11 +1,11 @@
 /* Light Cosmic Palette */
 :root {
     --cosmic-cream: #f8fafc;
-    --star-dust: #e8e1d9;
+    --star-dust: #55565B;
     --cosmic-blue: rgba(167, 196, 212, 0.2); /* Reduced opacity */
-    --nebula-pink: #d4a5a5;
+    --nebula-pink: #333333;
     --accent-gold: #393A3F;
-    --text-dark: #3a3a3a;
+    --text-dark: #393A3F;
 }
 
 /* Base Styles */
