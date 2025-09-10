@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thousand Pieces - Music Player</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,700;1,400&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color-1: #fde2e4;
+            --bg-color-2: #fff1e6;
+            --bg-color-3: #dfe7fd;
+            --bg-color-4: #e5eaf5;
+            --text-color: #575366;
+            --accent-color: #d85a77;
+            --card-bg: rgba(255, 255, 255, 0.4);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(-45deg, var(--bg-color-1), var(--bg-color-2), var(--bg-color-3), var(--bg-color-4));
+            background-size: 400% 400%;
+            animation: gradientBG 20s ease infinite;
+            color: var(--text-color);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .title-font {
+            font-family: 'Cormorant Garamond', serif;
+        }
+
+        /* Glassmorphism Card Effect */
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        /* Custom progress bar styles */
+        .progress-bar-container {
+            background-color: rgba(0, 0, 0, 0.1);
+            height: 6px;
+        }
+        .progress-bar-fill {
+            background-color: var(--accent-color);
+            transition: width 0.1s linear;
+        }
+
+        /* Player button styles */
+        .player-btn {
+            background-color: rgba(255, 255, 255, 0.5);
+            transition: all 0.2s ease;
+        }
+        .player-btn:hover {
+            background-color: rgba(255, 255, 255, 0.9);
+            transform: scale(1.1);
+        }
+        .player-btn:active {
+            transform: scale(1.05);
+        }
+        .play-btn {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        .play-btn:hover {
+             background-color: #c94a68;
+        }
+
+        /* Lyrics styles */
+        #lyrics-container {
+            height: 50vh;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+        
+        .lyric-line {
+            transition: opacity 0.3s ease;
+            line-height: 1.6;
+        }
+
+        .album-art.playing {
+            animation: pulse 4s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); }
+            50% { transform: scale(1.03); box-shadow: 0 20px 30px -8px rgba(216, 90, 119, 0.4), 0 15px 15px -8px rgba(216, 90, 119, 0.2); }
+            100% { transform: scale(1); box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); }
+        }
+
+        /* Custom scrollbar */
+        #lyrics-container::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        #lyrics-container::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+        }
+        
+        #lyrics-container::-webkit-scrollbar-thumb {
+            background: var(--accent-color);
+            border-radius: 10px;
+        }
+        
+        #lyrics-container::-webkit-scrollbar-thumb:hover {
+            background: #c94a68;
+        }
+
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4 py-8">
+
+    <div class="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+        <!-- Music Player Column -->
+        <div class="flex justify-center order-2 lg:order-1">
+            <div class="card w-full max-w-sm rounded-3xl shadow-2xl p-6 space-y-4">
+                <!-- Album Art -->
+                <div id="album-art" class="album-art aspect-square bg-gray-200 rounded-2xl shadow-lg flex items-center justify-center transition-all duration-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-24 h-24 text-gray-400 transition-all duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="0.5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M14.232 5.232l5.657 5.657-5.657 5.657" opacity="0.3" transform="translate(-10, -10) scale(0.3) rotate(45 12 12)" />
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0L12 14.364" opacity="0.5"/>
+                    </svg>
+                </div>
+
+                <!-- Song Info -->
+                <div class="text-center">
+                    <h1 class="title-font text-3xl font-bold text-gray-800">Thousand Pieces</h1>
+                    <p class="text-base text-gray-500">by Anonymous</p>
+                </div>
+
+                <!-- Progress Bar & Time -->
+                <div class="space-y-1">
+                    <div class="progress-bar-container w-full rounded-full cursor-pointer" id="progress-container">
+                        <div id="progress-bar" class="progress-bar-fill h-full rounded-full" style="width: 0%"></div>
+                    </div>
+                    <div class="flex justify-between text-xs font-light">
+                        <span id="current-time">0:00</span>
+                        <span id="duration">0:00</span>
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <div class="flex justify-center items-center space-x-6">
+                    <button id="prev-btn" class="player-btn p-3 rounded-full shadow">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M4 4a1 1 0 011 1v10a1 1 0 11-2 0V5a1 1 0 011-1zm12 0a1 1 0 011 1v10a1 1 0 11-2 0V5a1 1 0 011-1zm-8.555 5.168A1 1 0 007 9v2a1 1 0 001.555.832l2-1a1 1 0 000-1.664l-2-1z"/>
+                        </svg>
+                    </button>
+                    <button id="play-pause-btn" class="player-btn play-btn p-5 rounded-full shadow-lg">
+                        <svg id="play-icon" class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.168V8.832L4.555 5.168zM10 8.832l5.445-3.664A1 1 0 0117 6v8a1 1 0 01-1.555.832L10 11.168V8.832z"/>
+                        </svg>
+                        <svg id="pause-icon" class="w-8 h-8 hidden" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M5 4h3v12H5V4zm7 0h3v12h-3V4z"/>
+                        </svg>
+                    </button>
+                    <button id="next-btn" class="player-btn p-3 rounded-full shadow">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M4 4a1 1 0 011 1v10a1 1 0 11-2 0V5a1 1 0 011-1zm12 0a1 1 0 011 1v10a1 1 0 11-2 0V5a1 1 0 011-1zm-5.445 4.168A1 1 0 0013 9v2a1 1 0 01-1.555.832l-2-1a1 1 0 010-1.664l2-1A1 1 0 0011.555 8.168z"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Audio Element (Hidden) -->
+                <audio id="audio-player" preload="metadata">
+                    <!-- Replace with your actual audio file URL -->
+                    <source src="https://example.com/your-audio-file.mp3" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+            </div>
+        </div>
+
+        <!-- Lyrics Column -->
+        <div class="relative flex items-center justify-center order-1 lg:order-2">
+             <div id="lyrics-container" class="text-center space-y-4 text-lg md:text-xl lg:text-2xl title-font font-medium px-4">
+                <p>Break me into a thousand pieces…</p>
+                <p>Then say goodbye...</p>
+                <p>Break me into a thousand pieces...</p>
+                <p>Then say goodbye.</p>
+                <p>🎶</p>
+                <p>You said you loved me — then did this, why?</p>
+                <p>Told me I was forever, then watched me die.</p>
+                <p>Now I know that love's just dressed-up lies,</p>
+                <p>You ruined me — just to go get high.</p>
+                <p class="py-2"></p>
+                <p>You cracked the glass, you watched me break,</p>
+                <p>Told me "move on" while I sank in hate.</p>
+                <p>Held me close, then tossed me away,</p>
+                <p>Guess love's just theater, and I'm the play.</p>
+                <p>(Take a bow, you're the lead in this tragedy)</p>
+                <p>🔥</p>
+                <p>Break me into a thousand pieces, then say goodbye.</p>
+                <p>Let me curl up and die, with no one to ask why.</p>
+                <p>Thank God you left — so I could cry.</p>
+                <p>Break me into a thousand pieces... then say goodbye.</p>
+                <p>🎶</p>
+                <p>You said that love's crazy — but look what you made,</p>
+                <p>Lonely echoes, a ghost in your wake.</p>
+                <p>Said you wanted "more," but gave me flames,</p>
+                <p>Let alone be death to me… and you still never stayed.</p>
+                <p class="py-2"></p>
+                <p>I built my life around your spark,</p>
+                <p>Now I'm just ashes in the dark.</p>
+                <p>And you? You're out there making art,</p>
+                <p>Out of people you break apart.</p>
+                <p>🔥</p>
+                <p>Break me into a thousand pieces, say goodbye.</p>
+                <p>You left, you cursed me, now let me cry.</p>
+                <p>Break me into a thousand pieces, then say goodbye.</p>
+                <p>Every scream in me still asks why.</p>
+                <p>You played the part, and I played blind,</p>
+                <p>Break me into a thousand pieces… just one more time.</p>
+                <p>🎬</p>
+                <p>You were always good at leaving.</p>
+                <p>But I...?</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- DOM ELEMENTS ---
+            const playPauseBtn = document.getElementById('play-pause-btn');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const playIcon = document.getElementById('play-icon');
+            const pauseIcon = document.getElementById('pause-icon');
+            const albumArt = document.getElementById('album-art');
+            const progressBar = document.getElementById('progress-bar');
+            const progressContainer = document.getElementById('progress-container');
+            const currentTimeEl = document.getElementById('current-time');
+            const durationEl = document.getElementById('duration');
+            const lyricsContainer = document.getElementById('lyrics-container');
+            const audioPlayer = document.getElementById('audio-player');
+
+            // --- LYRICS DATA ---
+            const lyrics = [
+                { time: 2, text: "Break me into a thousand pieces…" },
+                { time: 6, text: "Then say goodbye..." },
+                { time: 10, text: "Break me into a thousand pieces..." },
+                { time: 14, text: "Then say goodbye." },
+                { time: 17, text: "🎶" },
+                { time: 19, text: "You said you loved me — then did this, why?" },
+                { time: 23, text: "Told me I was forever, then watched me die." },
+                { time: 27, text: "Now I know that love's just dressed-up lies," },
+                { time: 31, text: "You ruined me — just to go get high." },
+                { time: 35, text: "" },
+                { time: 37, text: "You cracked the glass, you watched me break," },
+                { time: 41, text: "Told me 'move on' while I sank in hate." },
+                { time: 45, text: "Held me close, then tossed me away," },
+                { time: 49, text: "Guess love's just theater, and I'm the play." },
+                { time: 54, text: "(Take a bow, you're the lead in this tragedy)" },
+                { time: 58, text: "🔥" },
+                { time: 60, text: "Break me into a thousand pieces, then say goodbye." },
+                { time: 65, text: "Let me curl up and die, with no one to ask why." },
+                { time: 70, text: "Thank God you left — so I could cry." },
+                { time: 75, text: "Break me into a thousand pieces... then say goodbye." },
+                { time: 80, text: "🎶" },
+                { time: 82, text: "You said that love's crazy — but look what you made," },
+                { time: 87, text: "Lonely echoes, a ghost in your wake." },
+                { time: 92, text: "Said you wanted 'more,' but gave me flames," },
+                { time: 97, text: "Let alone be death to me… and you still never stayed." },
+                { time: 102, text: "" },
+                { time: 104, text: "I built my life around your spark," },
+                { time: 108, text: "Now I'm just ashes in the dark." },
+                { time: 112, text: "And you? You're out there making art," },
+                { time: 116, text: "Out of people you break apart." },
+                { time: 120, text: "🔥" },
+                { time: 122, text: "Break me into a thousand pieces, say goodbye." },
+                { time: 127, text: "You left, you cursed me, now let me cry." },
+                { time: 132, text: "Break me into a thousand pieces, then say goodbye." },
+                { time: 137, text: "Every scream in me still asks why." },
+                { time: 142, text: "You played the part, and I played blind," },
+                { time: 147, text: "Break me into a thousand pieces… just one more time." },
+                { time: 153, text: "🎬" },
+                { time: 155, text: "You were always good at leaving." },
+                { time: 160, text: "But I...?" },
+            ];
+
+            // --- STATE ---
+            let isPlaying = false;
+            let currentLyricIndex = -1;
+            let isDragging = false;
+
+            // --- INITIALIZATION ---
+            const init = () => {
+                // Set up audio event listeners
+                audioPlayer.addEventListener('loadedmetadata', () => {
+                    durationEl.textContent = formatTime(audioPlayer.duration);
+                });
+                
+                audioPlayer.addEventListener('timeupdate', updateUI);
+                audioPlayer.addEventListener('ended', () => {
+                    isPlaying = false;
+                    playIcon.classList.remove('hidden');
+                    pauseIcon.classList.add('hidden');
+                    albumArt.classList.remove('playing');
+                });
+                
+                // Set up initial UI
+                durationEl.textContent = formatTime(audioPlayer.duration || 0);
+            };
+
+            // --- FUNCTIONS ---
+            const formatTime = (seconds) => {
+                if (isNaN(seconds)) return "0:00";
+                const minutes = Math.floor(seconds / 60);
+                const secs = Math.floor(seconds % 60);
+                return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+            };
+
+            const togglePlayPause = () => {
+                if (isPlaying) {
+                    audioPlayer.pause();
+                } else {
+                    audioPlayer.play().catch(error => {
+                        console.error("Playback failed:", error);
+                        // Fallback for browsers that require user interaction
+                        alert("Please interact with the page first to play audio");
+                    });
+                }
+                
+                isPlaying = !isPlaying;
+                if (isPlaying) {
+                    playIcon.classList.add('hidden');
+                    pauseIcon.classList.remove('hidden');
+                    albumArt.classList.add('playing');
+                } else {
+                    playIcon.classList.remove('hidden');
+                    pauseIcon.classList.add('hidden');
+                    albumArt.classList.remove('playing');
+                }
+            };
+            
+            const updateUI = () => {
+                const currentTime = audioPlayer.currentTime;
+                const duration = audioPlayer.duration;
+                
+                // Update time display
+                currentTimeEl.textContent = formatTime(currentTime);
+
+                // Update progress bar
+                const progressPercent = (currentTime / duration) * 100;
+                progressBar.style.width = `${progressPercent}%`;
+
+                // Auto-scroll lyrics
+                autoScrollLyrics();
+            };
+            
+            const autoScrollLyrics = () => {
+                const currentTime = audioPlayer.currentTime;
+                
+                // Find the current lyric index based on time
+                let newLyricIndex = -1;
+                
+                // Find the last lyric that should be displayed (time <= currentTime)
+                for (let i = lyrics.length - 1; i >= 0; i--) {
+                    if (lyrics[i].time <= currentTime) {
+                        newLyricIndex = i;
+                        break;
+                    }
+                }
+                
+                // If we found a new lyric to scroll to
+                if (newLyricIndex !== currentLyricIndex && newLyricIndex > 0) {
+                    // Calculate scroll position to center this line
+                    const lineHeight = 32; // Approximate line height in pixels
+                    const containerHeight = lyricsContainer.clientHeight;
+                    const scrollPosition = (newLyricIndex * lineHeight) - (containerHeight / 2) + (lineHeight / 2);
+                    
+                    lyricsContainer.scrollTo({
+                        top: scrollPosition,
+                        behavior: 'smooth'
+                    });
+                    
+                    currentLyricIndex = newLyricIndex;
+                }
+            };
+            
+            const handleProgressClick = (e) => {
+                if (isDragging) return;
+                
+                const rect = progressContainer.getBoundingClientRect();
+                const clickX = e.clientX - rect.left;
+                const width = rect.width;
+                const duration = audioPlayer.duration;
+                
+                // Calculate the new time based on click position
+                audioPlayer.currentTime = (clickX / width) * duration;
+                
+                // Update the UI
+                updateUI();
+            };
+            
+            const skipToPrev = () => {
+                const currentTime = audioPlayer.currentTime;
+                
+                // Find the previous lyric with a significant time gap
+                let prevTime = 0;
+                for (let i = lyrics.length - 1; i >= 0; i--) {
+                    if (lyrics[i].time < currentTime - 5) {
+                        prevTime = lyrics[i].time;
+                        break;
+                    }
+                }
+                
+                // Set the current time to the previous lyric time
+                audioPlayer.currentTime = Math.max(0, prevTime - 2); // Start 2 seconds before the lyric
+                updateUI();
+            };
+            
+            const skipToNext = () => {
+                const currentTime = audioPlayer.currentTime;
+                
+                // Find the next lyric
+                for (let i = 0; i < lyrics.length; i++) {
+                    if (lyrics[i].time > currentTime + 2) {
+                        audioPlayer.currentTime = lyrics[i].time - 1; // Start 1 second before the lyric
+                        updateUI();
+                        return;
+                    }
+                }
+                
+                // If we're at the end, go to the beginning
+                audioPlayer.currentTime = 0;
+                updateUI();
+            };
+
+            // --- EVENT LISTENERS ---
+            playPauseBtn.addEventListener('click', togglePlayPause);
+            prevBtn.addEventListener('click', skipToPrev);
+            nextBtn.addEventListener('click', skipToNext);
+            progressContainer.addEventListener('click', handleProgressClick);
+            
+            // Add drag support for progress bar
+            progressContainer.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                handleProgressClick(e);
+            });
+            
+            document.addEventListener('mouseup', () => {
+                isDragging = false;
+            });
+            
+            document.addEventListener('mousemove', (e) => {
+                if (isDragging) {
+                    handleProgressClick(e);
+                }
+            });
+
+            // --- START ---
+            init();
+        });
+    </script>
+</body>
+</html>
