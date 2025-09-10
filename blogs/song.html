@@ -20,7 +20,7 @@
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', sans-serif, weight: '700';
             background: linear-gradient(-45deg, var(--bg-color-1), var(--bg-color-2), var(--bg-color-3), var(--bg-color-4));
             background-size: 400% 400%;
             animation: gradientBG 20s ease infinite;
@@ -339,40 +339,6 @@
                 currentTime = Math.floor((clickX / width) * duration);
                 updateUI();
             };
-
-            // --- VISUALIZER ---
-            function resizeCanvas() {
-                visualizerCanvas.width = visualizerCanvas.clientWidth * window.devicePixelRatio;
-                visualizerCanvas.height = visualizerCanvas.clientHeight * window.devicePixelRatio;
-            }
-
-            function drawVisualizer() {
-                ctx.clearRect(0, 0, visualizerCanvas.width, visualizerCanvas.height);
-                const time = Date.now() * 0.002;
-                const width = visualizerCanvas.width;
-                const height = visualizerCanvas.height;
-                const halfHeight = height / 2;
-                
-                const gradient = ctx.createLinearGradient(0, 0, width, height);
-                gradient.addColorStop(0, 'rgba(216, 90, 119, 0.8)');
-                gradient.addColorStop(1, 'rgba(223, 231, 253, 0.8)');
-                ctx.strokeStyle = gradient;
-                ctx.lineWidth = 3 * window.devicePixelRatio;
-
-                ctx.beginPath();
-                ctx.moveTo(0, halfHeight);
-
-                const amplitude = isPlaying ? halfHeight * 0.8 : halfHeight * 0.1;
-                
-                for (let x = 0; x < width; x++) {
-                    const y = halfHeight + amplitude * Math.sin(x * 0.02 + time) * Math.sin(x * 0.005 + time * 0.5);
-                    ctx.lineTo(x, y);
-                }
-
-                ctx.stroke();
-
-                requestAnimationFrame(drawVisualizer);
-            }
 
 
             // --- EVENT LISTENERS ---
