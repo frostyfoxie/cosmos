@@ -57,7 +57,7 @@
         let camera, scene, renderer;
         let cameraControls;
         let sphereGroup, smallSphere;
-        let groundMirror, verticalMirror, oppositeMirror,leftMirror;
+        let groundMirror, verticalMirror, oppositeMirror,leftMirror,rightMirror,topMirror;
         let resolutionScale = 1;
         const size = new THREE.Vector2();
 
@@ -133,7 +133,19 @@
             oppositeMirror.rotateY(Math.PI);
             scene.add(oppositeMirror);
 
-            // Add opposite mirror for infinite reflections
+            // Add top mirror for infinite reflections
+            topMirror = new Reflector(geometry, {
+                clipBias: 0.003,
+                textureWidth: size.width,
+                textureHeight: size.height,
+                color: 0xc1cbcb,
+            
+            });
+            topMirror.position.y = 100;
+            topMirror.rotateX(Math.PI /2);
+            scene.add(topMirror);
+
+            // Add left mirror for infinite reflections
             leftMirror = new Reflector(geometry, {
                 clipBias: 0.003,
                 textureWidth: size.width,
@@ -141,21 +153,23 @@
                 color: 0xc1cbcb,
             
             });
-            leftMirror.position.y = 100;
-            leftMirror.rotateX(Math.PI /2);
+            leftMirror.position.x = -50;
+            leftMirror.position.y = 50;
+            leftMirror.rotateY(Math.PI / 2);
             scene.add(leftMirror);
 
-            // Add opposite mirror for infinite reflections
-            oppositeMirror = new Reflector(geometry, {
+            // Add right mirror for infinite reflections
+            rightMirror = new Reflector(geometry, {
                 clipBias: 0.003,
                 textureWidth: size.width,
                 textureHeight: size.height,
                 color: 0xc1cbcb,
+            
             });
-            oppositeMirror.position.y = 50;
-            oppositeMirror.position.z = 50;
-            oppositeMirror.rotateY(Math.PI);
-            scene.add(oppositeMirror);
+            rightMirror.position.x = 50;
+            rightMirror.position.y = 50;
+            rightMirror.rotateY(-Math.PI / 2);
+            scene.add(rightMirror);
 
             sphereGroup = new THREE.Object3D();
             scene.add(sphereGroup);
@@ -254,6 +268,8 @@
             verticalMirror.getRenderTarget().setSize(size.width, size.height);
             oppositeMirror.getRenderTarget().setSize(size.width, size.height);
             leftMirror.getRenderTarget().setSize(size.width, size.height);
+            topMirror.getRenderTarget().setSize(size.width, size.height);
+            rightMirror.getRenderTarget().setSize(size.width, size.height);
         }
 
         function animate() {
