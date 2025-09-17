@@ -58,7 +58,7 @@
         let cameraControls;
         let sphereGroup, smallSphere;
         let groundMirror, verticalMirror, oppositeMirror;
-        let resolutionScale = 1; // render target scale factor in [ 0, 1 ]
+        let resolutionScale = 1;
         const size = new THREE.Vector2();
 
         init();
@@ -101,7 +101,8 @@
                 clipBias: 0.003,
                 textureWidth: size.width,
                 textureHeight: size.height,
-                color: 0xb5b5b5
+                color: 0xb5b5b5,
+                recursion: 2  // Increased recursion for more reflections
             });
             groundMirror.position.y = 0.5;
             groundMirror.rotateX(-Math.PI / 2);
@@ -112,7 +113,8 @@
                 clipBias: 0.003,
                 textureWidth: size.width,
                 textureHeight: size.height,
-                color: 0xc1cbcb
+                color: 0xc1cbcb,
+                recursion: 5  // Increased recursion for more reflections
             });
             verticalMirror.position.y = 50;
             verticalMirror.position.z = -50;
@@ -123,11 +125,12 @@
                 clipBias: 0.003,
                 textureWidth: size.width,
                 textureHeight: size.height,
-                color: 0xc1cbcb
+                color: 0xc1cbcb,
+                recursion: 5  // Increased recursion for more reflections
             });
             oppositeMirror.position.y = 50;
             oppositeMirror.position.z = 50;
-            oppositeMirror.rotateY(Math.PI); // Face the other direction
+            oppositeMirror.rotateY(Math.PI);
             scene.add(oppositeMirror);
 
             sphereGroup = new THREE.Object3D();
@@ -163,11 +166,11 @@
             planeBottom.rotateX(-Math.PI / 2);
             scene.add(planeBottom);
 
-            ///const planeFront = new THREE.Mesh(planeGeo, new THREE.MeshPhongMaterial({ color: 0x7f7fff }));
-            ////planeFront.position.z = 50;
-           //// planeFront.position.y = 50;
-          ////  planeFront.rotateY(Math.PI);
-            ////scene.add(planeFront);
+            const planeFront = new THREE.Mesh(planeGeo, new THREE.MeshPhongMaterial({ color: 0x7f7fff }));
+            planeFront.position.z = 50;
+            planeFront.position.y = 50;
+            planeFront.rotateY(Math.PI);
+            scene.add(planeFront);
 
             const planeRight = new THREE.Mesh(planeGeo, new THREE.MeshPhongMaterial({ color: 0x00ff00 }));
             planeRight.position.x = 50;
