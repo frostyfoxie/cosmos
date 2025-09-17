@@ -194,33 +194,7 @@
             smallSphere = new THREE.Mesh(geometry, material);
             scene.add(smallSphere);
 
-            // walls
-            const planeTop = new THREE.Mesh(planeGeo, new THREE.MeshPhongMaterial({ color: 0xffffff }));
-            planeTop.position.y = 100;
-            planeTop.rotateX(Math.PI / 2);
-            scene.add(planeTop);
-
-            const planeBottom = new THREE.Mesh(planeGeo, new THREE.MeshPhongMaterial({ color: 0xffffff }));
-            planeBottom.rotateX(-Math.PI / 2);
-            scene.add(planeBottom);
-
-            ///const planeFront = new THREE.Mesh(planeGeo, new THREE.MeshPhongMaterial({ color: 0x7f7fff }));
-            ///planeFront.position.z = 50;
-            ///planeFront.position.y = 50;
-            ///planeFront.rotateY(Math.PI);
-            ///scene.add(planeFront);
-
-            const planeRight = new THREE.Mesh(planeGeo, new THREE.MeshPhongMaterial({ color: 0x00ff00 }));
-            planeRight.position.x = 50;
-            planeRight.position.y = 50;
-            planeRight.rotateY(-Math.PI / 2);
-            scene.add(planeRight);
-
-            const planeLeft = new THREE.Mesh(planeGeo, new THREE.MeshPhongMaterial({ color: 0xff0000 }));
-            planeLeft.position.x = -50;
-            planeLeft.position.y = 50;
-            planeLeft.rotateY(Math.PI / 2);
-            scene.add(planeLeft);
+            
 
             // lights
             const mainLight = new THREE.PointLight(0xe7e7e7, 2.5, 250, 0);
