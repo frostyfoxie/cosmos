@@ -96,16 +96,8 @@
             renderer.getDrawingBufferSize(size);
             size.multiplyScalar(resolutionScale).round();
 
-            groundMirror = new Reflector(geometry, {
-                clipBias: 0.003,
-                textureWidth: size.width,
-                textureHeight: size.height,
-                color: #FFFFFF,
-            });
-            groundMirror.position.y = 0.5;
-            groundMirror.rotateX(-Math.PI / 2);
-            scene.add(groundMirror);
-
+            
+//groundMirror
             geometry = new THREE.PlaneGeometry(100, 100);
             verticalMirror = new Reflector(geometry, {
                 clipBias: 0.003,
@@ -142,6 +134,16 @@
             topMirror.position.y = 100;
             topMirror.rotateX(Math.PI /2);
             scene.add(topMirror);
+
+            groundMirror = new Reflector(geometry, {
+                clipBias: 0.003,
+                textureWidth: size.width,
+                textureHeight: size.height,
+                color: #FFFFFF,
+            });
+            groundMirror.position.y = 0.5;
+            groundMirror.rotateX(-Math.PI / 2);
+            scene.add(groundMirror);
 
             // Add left mirror for infinite reflections
             leftMirror = new Reflector(geometry, {
