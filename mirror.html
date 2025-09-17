@@ -158,13 +158,13 @@
 
             const planeFront = new THREE.Mesh(planeGeo, new THREE.MeshPhongMaterial({ color: 0x7f7fff }));
             planeFront.position.z = 50;
-            planeFront.position.y = 50;
+            planeFront.position.y = 150;
             planeFront.rotateY(Math.PI);
             scene.add(planeFront);
 
             const planeRight = new THREE.Mesh(planeGeo, new THREE.MeshPhongMaterial({ color: 0x00ff00 }));
             planeRight.position.x = 50;
-            planeRight.position.y = 500;
+            planeRight.position.y = 50;
             planeRight.rotateY(-Math.PI / 2);
             scene.add(planeRight);
 
