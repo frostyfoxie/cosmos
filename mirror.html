@@ -120,7 +120,7 @@
 
 			geometry = new THREE.PlaneGeometry(100, 100);
             verticalMirror1 = new Reflector(geometry, {
-                clipBias: 0.003,
+                clipBias: 0.3,
                 textureWidth: size.width,
                 textureHeight: size.height,
                 color: 0xc1cbcb
@@ -205,7 +205,7 @@
 
             const gui = new GUI();
             const folder = gui.addFolder('Mirrors');
-            folder.add(params, 'resolution', 2, 10, 1)
+            folder.add(params, 'resolution', 0.2, 1, 0.1)
                 .onChange(function (val) {
                     resolutionScale = val;
                     onWindowResize();
