@@ -118,9 +118,9 @@
             verticalMirror.position.z = -50;
             scene.add(verticalMirror);
 
-			verticalMirror.position.y = 50;
-            verticalMirror.position.z = 50;
-            scene.add(verticalMirror);
+			///verticalMirror.position.y = 50;
+           /// verticalMirror.position.z = 50;
+            ///scene.add(verticalMirror);
 
             sphereGroup = new THREE.Object3D();
             scene.add(sphereGroup);
@@ -157,7 +157,7 @@
 
             const planeFront = new THREE.Mesh(planeGeo, new THREE.MeshPhongMaterial({ color: 0x7f7fff }));
             planeFront.position.z = 50;
-            planeFront.position.y = 150;
+            planeFront.position.y = 50;
             planeFront.rotateY(Math.PI);
             scene.add(planeFront);
 
