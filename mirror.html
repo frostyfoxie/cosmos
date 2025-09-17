@@ -57,7 +57,7 @@
         let camera, scene, renderer;
         let cameraControls;
         let sphereGroup, smallSphere;
-        let groundMirror, verticalMirror,verticalMirror1;
+        let groundMirror, verticalMirror,verticalMirror1,verticalMirror2;
         let resolutionScale = 1; // render target scale factor in [ 0, 1 ]
         const size = new THREE.Vector2();
 
@@ -118,6 +118,17 @@
             verticalMirror.position.z = -50;
             scene.add(verticalMirror);
 
+			geometry = new THREE.PlaneGeometry(100, 100);
+            verticalMirror2 = new Reflector(geometry, {
+                clipBias: 0.3,
+                textureWidth: size.width,
+                textureHeight: size.height,
+                color: 0xc1cbcb
+            });
+			verticalMirror2.position.y = 50;
+            verticalMirror2.position.z = 49.990;
+            scene.add(verticalMirror2);
+			
 			geometry = new THREE.PlaneGeometry(100, 100);
             verticalMirror1 = new Reflector(geometry, {
                 clipBias: 0.3,
@@ -225,6 +236,7 @@
 
             groundMirror.getRenderTarget().setSize(size.width, size.height);
             verticalMirror.getRenderTarget().setSize(size.width, size.height);
+			verticalMirror2.getRenderTarget().setSize(size.width, size.height);
 			verticalMirror1.getRenderTarget().setSize(size.width, size.height);
         }
 
