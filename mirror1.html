@@ -57,7 +57,7 @@
         let camera, scene, renderer;
         let cameraControls;
         let sphereGroup, smallSphere;
-        let groundMirror, verticalMirror, oppositeMirror;
+        let groundMirror, verticalMirror, oppositeMirror,leftMirror;
         let resolutionScale = 1;
         const size = new THREE.Vector2();
 
@@ -114,7 +114,7 @@
                 textureWidth: size.width,
                 textureHeight: size.height,
                 color: 0xc1cbcb,
-                recursion: 5  // Increased recursion for more reflections
+            
             });
             verticalMirror.position.y = 50;
             verticalMirror.position.z = -50;
@@ -126,7 +126,31 @@
                 textureWidth: size.width,
                 textureHeight: size.height,
                 color: 0xc1cbcb,
-                recursion: 5  // Increased recursion for more reflections
+        
+            });
+            oppositeMirror.position.y = 50;
+            oppositeMirror.position.z = 50;
+            oppositeMirror.rotateY(Math.PI);
+            scene.add(oppositeMirror);
+
+            // Add opposite mirror for infinite reflections
+            leftMirror = new Reflector(geometry, {
+                clipBias: 0.003,
+                textureWidth: size.width,
+                textureHeight: size.height,
+                color: 0xc1cbcb,
+            
+            });
+            leftMirror.position.y = 100;
+            leftMirror.rotateX(Math.PI /2);
+            scene.add(leftMirror);
+
+            // Add opposite mirror for infinite reflections
+            oppositeMirror = new Reflector(geometry, {
+                clipBias: 0.003,
+                textureWidth: size.width,
+                textureHeight: size.height,
+                color: 0xc1cbcb,
             });
             oppositeMirror.position.y = 50;
             oppositeMirror.position.z = 50;
@@ -229,6 +253,7 @@
             groundMirror.getRenderTarget().setSize(size.width, size.height);
             verticalMirror.getRenderTarget().setSize(size.width, size.height);
             oppositeMirror.getRenderTarget().setSize(size.width, size.height);
+            leftMirror.getRenderTarget().setSize(size.width, size.height);
         }
 
         function animate() {
