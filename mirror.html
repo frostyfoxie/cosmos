@@ -174,11 +174,11 @@
             planeBottom.rotateX(-Math.PI / 2);
             scene.add(planeBottom);
 
-            const planeFront = new THREE.Mesh(planeGeo, new THREE.MeshPhongMaterial({ color: 0x7f7fff }));
-            planeFront.position.z = 50;
-            planeFront.position.y = 150;
-            planeFront.rotateY(Math.PI);
-            scene.add(planeFront);
+            ///const planeFront = new THREE.Mesh(planeGeo, new THREE.MeshPhongMaterial({ color: 0x7f7fff }));
+          ///  planeFront.position.z = 50;
+          ///  planeFront.position.y = 150;
+          ///  planeFront.rotateY(Math.PI);
+         ////   scene.add(planeFront);
 
             const planeRight = new THREE.Mesh(planeGeo, new THREE.MeshPhongMaterial({ color: 0x00ff00 }));
             planeRight.position.x = 50;
@@ -233,6 +233,10 @@
 
             renderer.getDrawingBufferSize(size);
             size.multiplyScalar(resolutionScale).round();
+
+			verticalMirror2.renderOrder = 1;
+            verticalMirror1.renderOrder = 0;
+			
 
             groundMirror.getRenderTarget().setSize(size.width, size.height);
             verticalMirror.getRenderTarget().setSize(size.width, size.height);
