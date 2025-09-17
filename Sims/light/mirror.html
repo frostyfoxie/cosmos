@@ -205,7 +205,7 @@
 
             const gui = new GUI();
             const folder = gui.addFolder('Mirrors');
-            folder.add(params, 'resolution', 0.2, 0.1, 0.1)
+            folder.add(params, 'resolution', 0.2, 1, 0.1)
                 .onChange(function (val) {
                     resolutionScale = val;
                     onWindowResize();
