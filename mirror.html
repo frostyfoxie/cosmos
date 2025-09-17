@@ -118,10 +118,18 @@
             verticalMirror.position.z = -50;
             scene.add(verticalMirror);
 
-			verticalMirror.position.y = 50;
-            verticalMirror.position.z = 50;
-			verticalMirror.rotateX(Math.PI);
-            scene.add(verticalMirror);
+			
+            geometry = new THREE.PlaneGeometry(100, 100);
+            verticalMirror1 = new Reflector(geometry, {
+                clipBias: 0.003,
+                textureWidth: size.width,
+                textureHeight: size.height,
+                color: 0xc1cbcb
+            });
+			verticalMirror1.position.y = 50;
+            verticalMirror1.position.z = 50;
+			verticalMirror1.rotateX(Math.PI);
+            scene.add(verticalMirror1);
 
             sphereGroup = new THREE.Object3D();
             scene.add(sphereGroup);
