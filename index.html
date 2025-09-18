@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Full-screen borderless iframe</title>
+  <title>Cosmos</title>
   <style>
     /* remove default page spacing */
     html, body {
@@ -38,17 +38,6 @@
       font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue";
       pointer-events: none;
     }
-    .loader-wrapper {
-  /* Initial styles for the loader */
-  opacity: 1;
-  transition: opacity 0.5s ease-out; /* Example transition */
-}
-
-/* When content is loaded, add a class to trigger disappearance */
-.loaded .loader-wrapper {
-  opacity: 0;
-  animation-delay: 2s; /* Wait for 2 seconds before starting the disappearance animation */
-}
   </style>
 </head>
 <body>
@@ -60,7 +49,7 @@
           sandbox="allow-scripts allow-forms allow-same-origin">
   </iframe>
 
-  <div id="loader">"The journey of a thousand miles begins with a single step."</div>
+  
 
   <script>
     // hide loader once iframe is ready (best-effort; cross-origin iframes won't fire load in some cases)
