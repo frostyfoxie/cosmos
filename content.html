@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Aryan's Journal</title>
+    <link rel="icon" type="image/x-icon" href="blackhole.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -576,6 +577,18 @@ header {
         animate();
       });
 
+    </script>
+    <script>
+        const originalTitle = "Aryan's Journal";
+        let dotCount = 0;
+        const maxDots = 3;
+
+        // Start the title animation
+        const titleAnimation = setInterval(() => {
+            dotCount = (dotCount + 1) % (maxDots + 1); // Cycle dot count from 0 to 3
+            const dots = '.'.repeat(dotCount);
+            document.title = originalTitle + dots;
+        }, 500); // The animation will update every 500 milliseconds (half a second)
     </script>
     <script src="fluid-simulation.js"></script>
   </body>
