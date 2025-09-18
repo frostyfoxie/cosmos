@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Full-screen borderless iframe</title>
+  <style>
+    /* remove default page spacing */
+    html, body {
+      height: 100%;
+      margin: 0;
+      background: #000; /* fallback while content loads */
+      overflow: hidden;  /* avoids page scrollbars */
+    }
+
+    /* full-bleed borderless iframe */
+    iframe.fullscreen {
+      position: fixed; /* stays fixed even when page would scroll */
+      inset: 0;        /* top:0; right:0; bottom:0; left:0; */
+      width: 100vw;
+      height: 100vh;
+      border: 0;       /* no border */
+      margin: 0;
+      padding: 0;
+      display: block;
+      background: transparent;
+    }
+
+    /* optional little loader shown while iframe content loads */
+    #loader {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      color: #fff;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue";
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Change this path to your file / directory location -->
+  <iframe class="fullscreen"
+          src="index.html"
+          allowfullscreen
+          sandbox="allow-scripts allow-forms allow-same-origin">
+  </iframe>
+
+  <div id="loader">Loading…</div>
+
+  <script>
+    // hide loader once iframe is ready (best-effort; cross-origin iframes won't fire load in some cases)
+    const iframe = document.querySelector('iframe.fullscreen');
+    const loader = document.getElementById('loader');
+
+    iframe.addEventListener('load', () => {
+      if (loader) loader.style.display = 'none';
+    });
+
+    // Optional: press Esc to remove iframe (useful for dev)
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        iframe.style.display = 'none';
+        if (loader) loader.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
