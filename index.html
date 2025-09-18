@@ -34,10 +34,21 @@
       top: 50%;
       transform: translate(-50%, -50%);
       color: #1e293b;
-      font-size:100px;
+      font-size:10px;
       font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue";
       pointer-events: none;
     }
+    .loader-wrapper {
+  /* Initial styles for the loader */
+  opacity: 1;
+  transition: opacity 0.5s ease-out; /* Example transition */
+}
+
+/* When content is loaded, add a class to trigger disappearance */
+.loaded .loader-wrapper {
+  opacity: 0;
+  animation-delay: 2s; /* Wait for 2 seconds before starting the disappearance animation */
+}
   </style>
 </head>
 <body>
