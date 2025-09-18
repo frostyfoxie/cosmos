@@ -106,7 +106,7 @@ header {
       }
     </style>
   </head>
-  <body class="bg-gray-50 text-slate-800">
+  <body class="bg-gray-50 text-slate-800" oncontextmenu="return false;">
     <!-- Interactive Header with Orbs -->
   <header id="fluid-header">
       <div class="glass-pane"></div>
@@ -537,6 +537,15 @@ header {
           });
           point.z = totalDisplacement;
         });
+        document.onkeydown = function(e) {
+    if (e.keyCode === 123) { // F12
+        return false;
+    }
+    if (e.ctrlKey && e.shiftKey && e.keyCode === 'I'.charCodeAt(0)) { // Ctrl+Shift+I
+        return false;
+    }
+};
+      
 
         // Draw lines
         for (let x = 0; x < canvas.width; x += GRID_SPACING) {
