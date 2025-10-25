@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Aryan's Journal</title>
+    <link rel="icon" type="image/x-icon" href="blackhole.png" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: #f8fafc;
+        color: #1e293b;
+        margin: 0;
+        padding: 0;
+      }
+      /* Cosmic Header */
+      header {
+        height: 90%;
+        min-height: 600px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+        padding: 2rem;
+        background: var(--cosmic-cream);
+      }
+
+      .glass-pane {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--cosmic-blue);
+        backdrop-filter: blur(5px);
+        z-index: 1;
+      }
+      .description-truncate {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        height: 60px;
+      }
+      @keyframes popIn {
+        0% {
+          opacity: 0;
+          transform: scale(0.95) translateY(10px);
+        }
+        100% {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+      }
+      .card-pop-in {
+        animation: popIn 0.5s ease-out forwards;
+      }
+
+      /* Typewriter effect styles */
+      .typewriter h1 {
+        overflow: hidden; /* Ensures the content is not revealed until the animation */
+        border-right: 0.15em solid #1e293b; /* The typewriter cursor */
+        white-space: nowrap; /* Keeps the content on a single line */
+        margin: 0 auto; /* Gives that scrolling effect as the typing happens */
+        letter-spacing: 0.15em; /* Adjust as needed */
+        animation: typing 3.5s steps(40, end),
+          blink-caret 0.75s step-end infinite;
+      }
+
+      /* The typing effect */
+      @keyframes typing {
+        from {
+          width: 0;
+        }
+        to {
+          width: 100%;
+        }
+      }
+
+      /* The typewriter cursor effect */
+      @keyframes blink-caret {
+        from,
+        to {
+          border-color: transparent;
+        }
+        50% {
+          border-color: #1e293b;
+        }
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 text-slate-800" oncontextmenu="return false;">
+    <header id="fluid-header">
+      <div class="glass-pane"></div>
+      <div class="relative z-10 text-center typewriter">
+        <h1
+          class="text-3xl sm:text-5xl font-extrabold text-gray-900 leading-tight tracking-tight drop-shadow-md"
+        >
+          ARYAN'S JOURNAL
+        </h1>
+        <p class="mt-2 text-base sm:text-lg text-slate-600 font-medium">
+          Cosmic musings and interactive explorations
+        </p>
+      </div>
+    </header>
+
+    <main class="container mx-auto px-20 py-8 margin-0-50px">
+      <div
+        id="filter-container"
+        class="flex flex-wrap gap-2 justify-center mb-8"
+      >
+        <button
+          class="filter-btn bg-white text-gray-800 px-4 py-2 rounded-full shadow-sm border border-gray-200 transition-all hover:bg-gray-100 focus:outline-none focus:ring focus:ring-blue-300"
+          data-filter="all"
+        >
+          All
+        </button>
+      </div>
+
+      <div
+        id="blog-grid"
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+      >
+        <a
+          href="blogs/poem-6.html"
+          class="blog-card bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 group"
+          data-tags="Poetry"
+        >
+          <h2
+            class="text-xl font-bold text-gray-900 mt-2 group-hover:text-blue-600 transition-colors"
+          >
+            Naming it galaxy cuz cannot think of anything else
+          </h2>
+          <div class="meta text-sm text-gray-500 mt-1">
+            <span>September 16 2025</span>
+            <span>•</span>
+            <span>1 min read</span>
+          </div>
+          <p class="text-sm mt-3 text-gray-600 description-truncate">
+            Ahh idk what to name this poem cuz...lately I have lost the track of
+            managing my poems up here
+          </p>
+          <div class="tags mt-4 flex flex-wrap gap-2">
+            <span
+              class="tag text-xs font-medium px-2 py-1 rounded-full bg-slate-100 text-slate-600"
+              >Poetry</span
+            >
+          </div>
+        </a>
+
+        <a
+          href="Sims/scribo.html"
+          class="blog-card bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 group"
+          data-tags="Computing,Simulation"
+        >
+          <span
+            class="interactive-label text-xs font-semibold px-2 py-1 rounded-full text-blue-700 bg-blue-100 border border-blue-200 mb-2 inline-block"
+            >STANDALONE PROJECT</span
+          >
+          <h2
+            class="text-xl font-bold text-gray-900 mt-2 group-hover:text-blue-600 transition-colors"
+          >
+            Scribo
+          </h2>
+          <div class="meta text-sm text-gray-500 mt-1">
+            <span>Sep 1, 2025</span>
+          </div>
+          <p class="text-sm mt-3 text-gray-600 description-truncate">
+            A program desiged to make link sharing handy... imagine you could
+            share the lengthy links by smoll codes than writting the entire url
+            by hand or getting it printed &lt;3
+          </p>
+          <div class="tags mt-4 flex flex-wrap gap-2">
+            <span
+              class="tag text-xs font-medium px-2 py-1 rounded-full bg-slate-100 text-slate-600"
+              >Computing</span
+            >
+            <span
+              class="tag text-xs font-medium px-2 py-1 rounded-full bg-slate-100 text-slate-600"
+              >Simulation</span
+            >
+          </div>
+        </a>
+
+        <a
+          href="Sims/text-encryption.html"
+          class="blog-card bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 group"
+          data-tags="Mathematics,Computing,Simulation"
+        >
+          <span
+            class="interactive-label text-xs font-semibold px-2 py-1 rounded-full text-blue-700 bg-blue-100 border border-blue-200 mb-2 inline-block"
+            >STANDALONE PROJECT</span
+          >
+          <h2
+            class="text-xl font-bold text-gray-900 mt-2 group-hover:text-blue-600 transition-colors"
+          >
+            Text encryptor
+          </h2>
+          <div class="meta text-sm text-gray-500 mt-1">
+            <span>Aug 31, 2025</span>
+          </div>
+          <p class="text-sm mt-3 text-gray-600 description-truncate">
+            A working model of math based text encryptor decryptor...
+          </p>
+          <div class="tags mt-4 flex flex-wrap gap-2">
+            <span
+              class="tag text-xs font-medium px-2 py-1 rounded-full bg-slate-100 text-slate-600"
+              >Mathematics</span
+            >
+            <span
+              class="tag text-xs font-medium px-2 py-1 rounded-full bg-slate-100 text-slate-600"
+              >Computing</span
+            >
+            <span
+              class="tag text-xs font-medium px-2 py-1 rounded-full bg-slate-100 text-slate-600"
+              >Simulation</span
+            >
+          </div>
+        </a>
+
+        <a
+          href="https://frostyfoxie.github.io/cipher-gen/"
+          class="blog-card bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 group"
+          data-tags="Mathematics,Computing,Simulation"
+        >
+          <span
+            class="interactive-label text-xs font-semibold px-2 py-1 rounded-full text-blue-700 bg-blue-100 border border-blue-200 mb-2 inline-block"
+            >INTERACTIVE</span
+          >
+          <h2
+            class="text-xl font-bold text-gray-900 mt-2 group-hover:text-blue-600 transition-colors"
+          >
+            Ciphering
+          </h2>
+          <div class="meta text-sm text-gray-500 mt-1">
+            <span>Aug 29, 2025</span>
+          </div>
+          <p class="text-sm mt-3 text-gray-600 description-truncate">
+            An example of how ciphers really work and what are the queer ways of
+            using mathematics for security...
+          </p>
+          <div class="tags mt-4 flex flex-wrap gap-2">
+            <span
+              class="tag text-xs font-medium px-2 py-1 rounded-full bg-slate-100 text-slate-600"
+              >Mathematics</span
+            >
+            <span
+              class="tag text-xs font-medium px-2 py-1 rounded-full bg-slate-100 text-slate-600"
+              >Computing</span
+            >
+            <span
+              class.="tag text-xs font-medium px-2 py-1 rounded-full bg-slate-100 text-slate-600"
+              >Simulation</span
+            >
+          </div>
+        </a>
+
+        <a
+          href="https://frostyfoxie.github.io/Anonymous-Chatting-/"
+          class="blog-card bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 group"
+          data-tags="Mathematics,Computing,Coding,Simulation"
+        >
+          <span
+            class="interactive-label text-xs font-semibold px-2 py-1 rounded-full text-blue-700 bg-blue-100 border border-blue-200 mb-2 inline-block"
+            >STANDALONE PROJECT</span
+          >
+          <h2
+            class="text-xl font-bold text-gray-900 mt-2 group-hover:text-blue-600 transition-colors"
+          >
+            Anonymous chatting
+          </h2>
+          <div class="meta text-sm text-gray-500 mt-1">
+            <span>Aug 20, 2025</span>
+          </div>
+          <p class="text-sm mt-3 text-gray-600 description-truncate">
+            A website that lets users chat anonymously using a hybrid
+            cryptosystem combining coordinate-based substitution,
+            PBKDF2-derived AES-256-GCM, a ChaCha-like XOR stream, and Base64
+            encoding for maximum confusion, diffusion, integrity, and
+            portability.
+          </p>
+          <div class="tags mt-4 flex flex-wrap gap-2">
+            <span
+              class="tag text-xs font-medium px-2 py-1 rounded-full bg-slate-100 text-slate-600"
+              >Mathematics</span
+            >
+            <span
+              class="tag text-xs font-medium px-2 py-1 rounded-full bg-slate-100 text-slate-600"
+              >Computing</span
+            >
+            <span
+              class="tag text-xs font-medium px-2 py-1 rounded-full bg-slate-100 text-slate-600"
+              >Coding</span
+            >
+            <span
+              class="tag text-xs font-medium px-2 py-1 rounded-full bg-slate-100 text-slate-600"
+              >Simulation</span
+            >
+          </div>
+        </a>
+
+        <a
+          href="Sims/reflection-of-light.html"
+          class="blog-card bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 group"
+          data-tags="Physics,Simulation"
+        >
+          <span
+            class="interactive-label text-xs font-semibold px-2 py-1 rounded-full text-blue-700 bg-blue-100 border border-blue-200 mb-2 inline-block"
+            >INTERACTIVE</span
+          >
+          <h2
+            class="text-xl font-bold text-gray-900 mt-2 group-hover:text-blue-600 transition-colors"
+          >
+            Light
+          </h2>
+          <div class="meta text-sm text-gray-500 mt-1">
+            <span>May 13, 2025</span>
+          </div>
+          <p class="text-sm mt-3 text-gray-600 description-truncate">
+            An attempt to understand how light behaves... (To be continued)
+          </p>
+          <div class="tags mt-4 flex flex-wrap gap-2">
+            <span
+              class="tag text-xs font-medium px-2 py-1 rounded-full bg-slate-100 text-slate-600"
+              >Physics</span
+            >
+            <span
+              class="tag text-xs font-medium px-2 py-1 rounded-full bg-slate-100 text-slate-600"
+              >Simulation</span
+            >
+          </div>
+        </a>
+
+        <a
+          href="Sims/blackhole-sim.html"
+          class="blog-card bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 group"
+          data-tags="Physics,Space,Simulation"
+        >
+          <span
+            class="interactive-label text-xs font-semibold px-2 py-1 rounded-full text-blue-700 bg-blue-100 border border-blue-200 mb-2 inline-block"
+            >INTERACTIVE</span
+          >
+          <h2
+            class="text-xl font-bold text-gray-900 mt-2 group-hover:text-blue-600 transition-colors"
+          >
+            Gravitational lensing Visualization
+          </h2>
+          <div class="meta text-sm text-gray-500 mt-1">
+            <span>May 9, 2025</span>
+          </div>
+          <p class="text-sm mt-3 text-gray-600 description-truncate">
+            An attempt to show how gravitation lensing might be...
+          </p>
+          <div class="tags mt-4 flex flex-wrap gap-2">
+            <span
+              class="tag text-xs font-medium px-2 py-1 rounded-full bg-slate-100 text-slate-600"
+              >Physics</span
+            >
+            <span
+              class="tag text-xs font-medium px-2 py-1 rounded-full bg-slate-100 text-slate-600"
+              >Space</span
+            >
+            <span
+              class="tag text-xs font-medium px-2 py-1 rounded-full bg-slate-100 text-slate-600"
+              >Simulation</span
+            >
+          </div>
+        </a>
+
+        <a
+          href="Sims/physics-sim.html"
+          class="blog-card bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 group"
+          data-tags="Physics,Simulation"
+        >
+          <span
+            class="interactive-label text-xs font-semibold px-2 py-1 rounded-full text-blue-700 bg-blue-100 border border-blue-200 mb-2 inline-block"
+            >INTERACTIVE</span
+          >
+          <h2
+            class="text-xl font-bold text-gray-900 mt-2 group-hover:text-blue-600 transition-colors"
+          >
+            Physics games
+          </h2>
+          <div class="meta text-sm text-gray-500 mt-1">
+            <span>May 9, 2025</span>
+          </div>
+          <p class="text-sm mt-3 text-gray-600 description-truncate">
+            Some physics based games
+          </p>
+          <div class="tags mt-4 flex flex-wrap gap-2">
+            <span
+              class="tag text-xs font-medium px-2 py-1 rounded-full bg-slate-100 text-slate-600"
+              >Physics</span
+            >
+            <span
+              class="tag text-xs font-medium px-2 py-1 rounded-full bg-slate-100 text-slate-600"
+              >Simulation</span
+            >
+          </div>
+        </a>
+
+        <a
+          href="blogs/blog-1.html"
+          class="blog-card bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 group"
+          data-tags="Astronomy,Space,Physics"
+        >
+          <h2
+            class="text-xl font-bold text-gray-900 mt-2 group-hover:text-blue-600 transition-colors"
+          >
+            Galaxies and Galactic Dynamics
+          </h2>
+          <div class="meta text-sm text-gray-500 mt-1">
+            <span>April 14, 2025</span>
+            <span>•</span>
+            <span>4 min read</span>
+          </div>
+          <p class="text-sm mt-3 text-gray-600 description-truncate">
+            Bas aiwain likha hai...
+          </p>
+          <div class="tags mt-4 flex flex-wrap gap-2">
+            <span
+              class="tag text-xs font-medium px-2 py-1 rounded-full bg-slate-100 text-slate-600"
+              >Astronomy</span
+            >
+          </div>
+        </a>
+
+        <a
+          href="blogs/poem-1.html"
+          class="blog-card bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 group"
+          data-tags="Poetry"
+        >
+          <h2
+            class="text-xl font-bold text-gray-900 mt-2 group-hover:text-blue-600 transition-colors"
+          >
+            One of my favourite (^_^)
+          </h2>
+          <div class="meta text-sm text-gray-500 mt-1">
+            <span>March 4, 2025</span>
+            <span>•</span>
+            <span>1 min read</span>
+          </div>
+          <p class="text-sm mt-3 text-gray-600 description-truncate">
+            Poem hai aur kya?
+          </p>
+          <div class="tags mt-4 flex flex-wrap gap-2">
+            <span
+              class="tag text-xs font-medium px-2 py-1 rounded-full bg-slate-100 text-slate-600"
+              >Poetry</span
+            >
+            <span
+              class="tag text-xs font-medium px-2 py-1 rounded-full bg-slate-100 text-slate-600"
+              >Philosophy</span
+            >
+          </div>
+        </a>
+
+        <a
+          href="blogs/poem-5.html"
+          class="blog-card bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 group"
+          data-tags="Poetry"
+        >
+          <h2
+            class="text-xl font-bold text-gray-900 mt-2 group-hover:text-blue-600 transition-colors"
+          >
+            The Ache for Ambivalence
+          </h2>
+          <div class="meta text-sm text-gray-500 mt-1">
+            <span>November 16, 2024</span>
+            <span>•</span>
+            <span>1 min read</span>
+          </div>
+          <p class="text-sm mt-3 text-gray-600 description-truncate">
+            Likhe the soche share kare..
+          </p>
+          <div class="tags mt-4 flex flex-wrap gap-2">
+            <span
+              class="tag text-xs font-medium px-2 py-1 rounded-full bg-slate-100 text-slate-600"
+              >Poetry</span
+            >
+          </div>
+        </a>
+
+        <a
+          href="blogs/poem-4.html"
+          class="blog-card bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 group"
+          data-tags="Poetry"
+        >
+          <h2
+            class="text-xl font-bold text-gray-900 mt-2 group-hover:text-blue-600 transition-colors"
+          >
+            Four Leafed Clover
+          </h2>
+          <div class="meta text-sm text-gray-500 mt-1">
+            <span>November 16 2024</span>
+            <span>•</span>
+            <span>1 min read</span>
+          </div>
+          <p class="text-sm mt-3 text-gray-600 description-truncate">
+            A gentle reminder that everyday grass can soothe us just as surely as
+            any lucky clover.
+          </p>
+          <div class="tags mt-4 flex flex-wrap gap-2">
+            <span
+              class="tag text-xs font-medium px-2 py-1 rounded-full bg-slate-100 text-slate-600"
+              >Poetry</span
+            >
+          </div>
+        </a>
+
+        <a
+          href="blogs/poem-3.html"
+          class="blog-card bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 group"
+          data-tags="Poetry"
+        >
+          <h2
+            class="text-xl font-bold text-gray-900 mt-2 group-hover:text-blue-600 transition-colors"
+          >
+            Reflecting Mirror
+          </h2>
+          <div class="meta text-sm text-gray-500 mt-1">
+            <span>November 16, 2024</span>
+            <span>•</span>
+            <span>1 min read</span>
+          </div>
+          <p class="text-sm mt-3 text-gray-600 description-truncate">
+            idk ye shabd aate kahaaaaa se hain aakhir?????
+          </p>
+          <div class="tags mt-4 flex flex-wrap gap-2">
+            <span
+              class="tag text-xs font-medium px-2 py-1 rounded-full bg-slate-100 text-slate-600"
+              >Poetry</span
+            >
+          </div>
+        </a>
+
+        <a
+          href="blogs/poem-2.html"
+          class="blog-card bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 group"
+          data-tags="Poetry"
+        >
+          <h2
+            class="text-xl font-bold text-gray-900 mt-2 group-hover:text-blue-600 transition-colors"
+          >
+            Steps I Climb
+          </h2>
+          <div class="meta text-sm text-gray-500 mt-1">
+            <span>November 16, 2024</span>
+            <span>•</span>
+            <span>1 min read</span>
+          </div>
+          <p class="text-sm mt-3 text-gray-600 description-truncate">
+            Poem Poem Poem Poeeeeeeeeeeem
+          </p>
+          <div class="tags mt-4 flex flex-wrap gap-2">
+            <span
+              class="tag text-xs font-medium px-2 py-1 rounded-full bg-slate-100 text-slate-600"
+              >Poetry</span
+            >
+          </div>
+        </a>
+
+        <a
+          href="blogs/blog-3.html"
+          class="blog-card bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 group"
+          data-tags="Physics"
+        >
+          <h2
+            class="text-xl font-bold text-gray-900 mt-2 group-hover:text-blue-600 transition-colors"
+          >
+            I was thinking about time travel and...
+          </h2>
+          <div class="meta text-sm text-gray-500 mt-1">
+            <span>November 16, 2024</span>
+            <span>•</span>
+            <span>2 min read</span>
+          </div>
+          <p class="text-sm mt-3 text-gray-600 description-truncate">
+            HAHAHA THAS A CLICKBAIT!!
+          </p>
+          <div class="tags mt-4 flex flex-wrap gap-2">
+            <span
+              class="tag text-xs font-medium px-2 py-1 rounded-full bg-slate-100 text-slate-600"
+              >Physics</span
+            >
+          </div>
+        </a>
+      </div>
+    </main>
+
+    <section class="contacts container mx-auto px-4 py-8">
+      <h2 class="text-2xl font-bold text-gray-900 text-center mb-6">
+        Connect With Me
+      </h2>
+      <div class="contact-links flex justify-center gap-4">
+        <a
+          href="https://instagram.com/dark.isnt"
+          class="contact-link text-slate-600 hover:text-blue-500 transition-colors flex items-center gap-2"
+          target="_blank"
+        >
+          <i class="fab fa-instagram text-xl"></i>
+          <span>Instagram</span>
+        </a>
+      </div>
+    </section>
+
+    <script>
+      // Blog filtering functionality
+      document.addEventListener('DOMContentLoaded', () => {
+        const blogGrid = document.getElementById('blog-grid');
+        const filterContainer = document.getElementById('filter-container');
+        const blogCards = document.querySelectorAll('.blog-card');
+        const allTags = new Set();
+
+        // Collect all unique tags
+        blogCards.forEach((card) => {
+          const tags = card.getAttribute('data-tags').split(',');
+          tags.forEach((tag) => allTags.add(tag.trim()));
+        });
+
+        // Create filter buttons
+        allTags.forEach((tag) => {
+          const button = document.createElement('button');
+          button.textContent = tag;
+          button.className =
+            'filter-btn bg-white text-gray-800 px-4 py-2 rounded-full shadow-sm border border-gray-200 transition-all hover:bg-gray-100 focus:outline-none focus:ring focus:ring-blue-300';
+          button.setAttribute('data-filter', tag);
+          filterContainer.appendChild(button);
+        });
+
+        // Add event listener to filter buttons
+        filterContainer.addEventListener('click', (e) => {
+          if (e.target.matches('.filter-btn')) {
+            const filterTag = e.target.getAttribute('data-filter');
+
+            // Toggle active class
+            filterContainer.querySelectorAll('.filter-btn').forEach((btn) => {
+              btn.classList.remove(
+                'bg-gray-800',
+                'text-white',
+                'hover:bg-gray-700'
+              );
+              btn.classList.add(
+                'bg-white',
+                'text-gray-800',
+                'hover:bg-gray-100'
+              );
+            });
+            e.target.classList.remove(
+              'bg-white',
+              'text-gray-800',
+              'hover:bg-gray-100'
+            );
+            e.target.classList.add(
+              'bg-gray-800',
+              'text-white',
+              'hover:bg-gray-700'
+            );
+
+            // Show/hide cards based on filter
+            blogCards.forEach((card) => {
+              const tags = card
+                .getAttribute('data-tags')
+                .split(',')
+                .map((tag) => tag.trim());
+              card.classList.remove('card-pop-in'); // Remove animation class to reset
+
+              if (filterTag === 'all' || tags.includes(filterTag)) {
+                card.style.display = 'block';
+                // Add a slight delay to re-trigger the animation
+                setTimeout(() => {
+                  card.classList.add('card-pop-in');
+                }, 10);
+              } else {
+                card.style.display = 'none';
+              }
+            });
+          }
+        });
+
+        // Set 'All' button as active by default
+        const allButton = filterContainer.querySelector('[data-filter="all"]');
+        if (allButton) {
+          allButton.classList.add(
+            'bg-gray-800',
+            'text-white',
+            'hover:bg-gray-700'
+          );
+        }
+
+        // Initial animation for all cards on page load
+        blogCards.forEach((card, index) => {
+          setTimeout(() => {
+            card.classList.add('card-pop-in');
+          }, index * 100);
+        });
+      });
+    </script>
+    <script>
+      const originalTitle = "Aryan's Journal";
+      let dotCount = 0;
+      const maxDots = 3;
+
+      // Start the title animation
+      const titleAnimation = setInterval(() => {
+        dotCount = (dotCount + 1) % (maxDots + 1); // Cycle dot count from 0 to 3
+        const dots = '.'.repeat(dotCount);
+        document.title = originalTitle + dots;
+      }, 500); // The animation will update every 500 milliseconds (half a second)
+    </script>
+    <script src="fluid-simulation.js"></script>
+  </body>
+</html>
