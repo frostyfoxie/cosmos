@@ -247,7 +247,7 @@ header {
 
         <!-- Galactic Dynamics -->
         <a href="blogs/blog-1.html" class="blog-card bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 group" data-tags="Astronomy,Space,Physics">
-          <h2 class="text-xl font-bold text-gray-900 mt-2 group-hover:text-blue-600 transition-colors">Galaxies and Galactic Dynamics</h2>
+          <h2 class="text-xl font-bold text-gray-900 mt-2 group-hover:text-blue-600 transition-colors">Galaxies and Gafunctionynamics</h2>
           <div class="meta text-sm text-gray-500 mt-1">
             <span>April 14, 2025</span>
             <span>•</span>
@@ -453,11 +453,11 @@ header {
     //  const GRID_SPACING = 30; // Spacing between grid points
 
       // Function to resize canvas
-   //   function resizeCanvas() {
-     //   canvas.width = window.innerWidth;
-     //   canvas.height = window.innerHeight;
-   //     generateGrid();
-  //    }
+    function resizeCanvas() {
+       canvas.width = window.innerWidth;
+       canvas.height = window.innerHeight;
+       generateGrid();
+     }
 
       // Generate the grid points
       function generateGrid() {
@@ -549,19 +549,19 @@ header {
       
 
         // Draw lines
-   //    for (let x = 0; x < canvas.width; x += GRID_SPACING) {
- //         ctx.beginPath();
-  //        for (let y = 0; y < canvas.height; y += GRID_SPACING) {
-   //         const point = grid.find(p => p.x === x && p.y === y);
-    //        const yOffset = point.z;
-   //         if (y === 0) {
-//              ctx.moveTo(x, y + yOffset);
-  //          } else {
-  //            ctx.lineTo(x, y + yOffset);
-   //         }
- //         }
-   //       ctx.stroke();
- //       }
+      for (let x = 0; x < canvas.width; x += GRID_SPACING) {
+          ctx.beginPath();
+         for (let y = 0; y < canvas.height; y += GRID_SPACING) {
+            const point = grid.find(p => p.x === x && p.y === y);
+           const yOffset = point.z;
+           if (y === 0) {
+              ctx.moveTo(x, y + yOffset);
+            } else {
+            ctx.lineTo(x, y + yOffset);
+           }
+          }
+          ctx.stroke();
+        }
 
         for (let y = 0; y < canvas.height; y += GRID_SPACING) {
           ctx.beginPath();
