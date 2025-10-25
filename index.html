@@ -21,7 +21,7 @@
         margin: 0;
         padding: 0;
       }
-      .interactive-background {
+    /*.interactive-background {
         position: absolute;
         top: 0;
         left: 0;
@@ -446,18 +446,18 @@ header {
       });
 
       // --- Canvas-based Ripple Animation ---
-      const canvas = document.getElementById('ripple-canvas');
-      const ctx = canvas.getContext('2d');
-      let ripples = [];
-      let grid = [];
-      const GRID_SPACING = 30; // Spacing between grid points
+     // const canvas = document.getElementById('ripple-canvas');
+     // const ctx = canvas.getContext('2d');
+    //  let ripples = [];
+    //  let grid = [];
+    //  const GRID_SPACING = 30; // Spacing between grid points
 
       // Function to resize canvas
-      function resizeCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        generateGrid();
-      }
+   //   function resizeCanvas() {
+     //   canvas.width = window.innerWidth;
+     //   canvas.height = window.innerHeight;
+   //     generateGrid();
+  //    }
 
       // Generate the grid points
       function generateGrid() {
@@ -474,70 +474,71 @@ header {
       }
 
       // Handle user clicks to create ripples
-      canvas.addEventListener('click', (e) => {
-        ripples.push({
-          x: e.clientX,
-          y: e.clientY,
-          radius: 0,
-          maxRadius: 200,
-          speed: 10,
-          intensity: 20,
-          opacity: 1
-        });
-      });
+   //   canvas.addEventListener('click', (e) => {
+    //    ripples.push({
+    //      x: e.clientX,
+      //    y: e.clientY,
+  //        radius: 0,
+   //       maxRadius: 200,
+  //        speed: 10,
+   //       intensity: 20,
+  //        opacity: 1
+  //      });
+ //     });
       
       // Handle touch events
-      canvas.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        const touch = e.touches[0];
-        ripples.push({
-          x: touch.clientX,
-          y: touch.clientY,
-          radius: 0,
-          maxRadius: 200,
-          speed: 10,
-          intensity: 20,
-          opacity: 1
-        });
-      });
+//      canvas.addEventListener('touchstart', (e) => {
+   //     e.preventDefault();
+ ///       const touch = e.touches[0];
+  //      ripples.push({
+ ///         x: touch.clientX,
+///          y: touch.clientY,
+///          radius: 0,
+ ///         maxRadius: 200,
+  //        speed: 10,
+ //         intensity: 20,
+//          opacity: 1
+//        });
+//      });
 
 
       // Main animation loop
-      function animate() {
+ //     function animate() {
         // Clear canvas
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+///        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Update and draw ripples
-        ripples.forEach((ripple, index) => {
-          ripple.radius += ripple.speed;
-          ripple.opacity = 1 - (ripple.radius / ripple.maxRadius);
-
+///        // Update and draw ripples
+//        ripples.forEach((ripple, index) => {
+////          ripple.radius += ripple.speed;
+//          ripple.opacity = 1 - (ripple.radius / ripple.maxRadius);
+//
           // Remove old ripples
-          if (ripple.radius > ripple.maxRadius) {
-            ripples.splice(index, 1);
-          }
-        });
+//          if (ripple.radius > ripple.maxRadius) {
+//            ripples.splice(index, 1);
+//          }
+//        });
 
         // Draw grid
         ctx.strokeStyle = "rgba(0, 0, 0, 0.05)";
         ctx.lineWidth = 1;
 
         // Animate grid points
-        grid.forEach(point => {
-          let totalDisplacement = 0;
-          ripples.forEach(ripple => {
-            const dx = point.x - ripple.x;
-            const dy = point.y - ripple.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
-
-            if (distance < ripple.maxRadius) {
-              const effect = Math.sin(distance / (ripple.radius * 0.5) * Math.PI) * ripple.intensity * ripple.opacity;
-              totalDisplacement += effect;
-            }
-          });
-          point.z = totalDisplacement;
-        });
-        document.onkeydown = function(e) {
+ //       grid.forEach(point => {
+//          let totalDisplacement = 0;
+//          ripples.forEach(ripple => {
+//// //           const dx = point.x - ripple.x;
+//            const dy = point.y - ripple.y;
+ //           const distance = Math.sqrt(dx * dx + dy * dy);
+//
+//            if (distance < ripple.maxRadius) {
+//              const effect = Math.sin(distance / (ripple.radius * 0.5) * Math.PI) * ripple.intensity * ripple.opacity;
+//              totalDisplacement += effect;
+//            }
+//          });
+//          point.z = totalDisplacement;
+//        });
+      
+       document.onkeydown = function(e) {
     if (e.keyCode === 123) { // F12
         return false;
     }
@@ -548,19 +549,19 @@ header {
       
 
         // Draw lines
-        for (let x = 0; x < canvas.width; x += GRID_SPACING) {
-          ctx.beginPath();
-          for (let y = 0; y < canvas.height; y += GRID_SPACING) {
-            const point = grid.find(p => p.x === x && p.y === y);
-            const yOffset = point.z;
-            if (y === 0) {
-              ctx.moveTo(x, y + yOffset);
-            } else {
-              ctx.lineTo(x, y + yOffset);
-            }
-          }
-          ctx.stroke();
-        }
+   //    for (let x = 0; x < canvas.width; x += GRID_SPACING) {
+ //         ctx.beginPath();
+  //        for (let y = 0; y < canvas.height; y += GRID_SPACING) {
+   //         const point = grid.find(p => p.x === x && p.y === y);
+    //        const yOffset = point.z;
+   //         if (y === 0) {
+//              ctx.moveTo(x, y + yOffset);
+  //          } else {
+  //            ctx.lineTo(x, y + yOffset);
+   //         }
+ //         }
+   //       ctx.stroke();
+ //       }
 
         for (let y = 0; y < canvas.height; y += GRID_SPACING) {
           ctx.beginPath();
