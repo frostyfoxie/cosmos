@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptoDoc - Secure Document Vault</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f0f4f8; }
+        
+        .editor-surface {
+            min-height: 450px;
+            outline: none;
+        }
+        
+        .editor-surface:empty:before {
+            content: attr(data-placeholder);
+            color: #94a3b8;
+            cursor: text;
+        }
+
+        .toolbar-btn {
+            @apply p-2 hover:bg-indigo-50 rounded-md transition-colors text-slate-600 hover:text-indigo-600 flex items-center justify-center;
+        }
+
+        .toolbar-btn.active {
+            @apply bg-indigo-100 text-indigo-700;
+        }
+
+        /* Styling for the rich text content */
+        .rich-content h1 { font-size: 1.875rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .rich-content h2 { font-size: 1.5rem; font-weight: 600; margin-bottom: 0.5rem; }
+        .rich-content ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
+        .rich-content ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 1rem; }
+        .rich-content p { margin-bottom: 1rem; }
+    </style>
+</head>
+<body class="min-h-screen text-slate-800">
+
+    <nav class="bg-white/80 backdrop-blur-md border-b sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="bg-gradient-to-tr from-indigo-600 to-violet-600 p-2 rounded-xl shadow-lg shadow-indigo-200 text-white">
+                    <i data-lucide="shield-check" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-violet-600">CryptoDoc</h1>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">Private Editor</p>
+                </div>
+            </div>
+            <div class="flex bg-slate-100 p-1 rounded-xl">
+                <button onclick="switchTab('write')" id="tab-write" class="px-5 py-1.5 rounded-lg text-sm font-semibold transition-all bg-white shadow-sm text-indigo-600">Write</button>
+                <button onclick="switchTab('decrypt')" id="tab-decrypt" class="px-5 py-1.5 rounded-lg text-sm font-semibold transition-all text-slate-500 hover:text-indigo-600">Decrypt</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-5xl mx-auto px-6 py-10">
+        
+        <!-- SECTION 1: WRITE & ENCRYPT -->
+        <div id="section-write" class="space-y-6 animate-in fade-in duration-500">
+            <div class="flex flex-col lg:flex-row gap-6 items-start">
+                
+                <!-- Main Editor Area -->
+                <div class="flex-grow w-full space-y-4">
+                    <div class="bg-white rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-200 overflow-hidden">
+                        <!-- Toolbar -->
+                        <div class="border-b bg-slate-50/50 p-2 flex flex-wrap gap-1">
+                            <button onclick="format('bold')" class="toolbar-btn" title="Bold"><i data-lucide="bold" class="w-4 h-4"></i></button>
+                            <button onclick="format('italic')" class="toolbar-btn" title="Italic"><i data-lucide="italic" class="w-4 h-4"></i></button>
+                            <button onclick="format('underline')" class="toolbar-btn" title="Underline"><i data-lucide="underline" class="w-4 h-4"></i></button>
+                            <div class="w-px h-6 bg-slate-200 mx-1 self-center"></div>
+                            <button onclick="format('formatBlock', 'H1')" class="toolbar-btn" title="Heading 1"><i data-lucide="heading-1" class="w-4 h-4"></i></button>
+                            <button onclick="format('formatBlock', 'H2')" class="toolbar-btn" title="Heading 2"><i data-lucide="heading-2" class="w-4 h-4"></i></button>
+                            <div class="w-px h-6 bg-slate-200 mx-1 self-center"></div>
+                            <button onclick="format('insertUnorderedList')" class="toolbar-btn" title="Bullet List"><i data-lucide="list" class="w-4 h-4"></i></button>
+                            <button onclick="format('insertOrderedList')" class="toolbar-btn" title="Numbered List"><i data-lucide="list-ordered" class="w-4 h-4"></i></button>
+                            <div class="w-px h-6 bg-slate-200 mx-1 self-center"></div>
+                            <button onclick="format('justifyLeft')" class="toolbar-btn" title="Align Left"><i data-lucide="align-left" class="w-4 h-4"></i></button>
+                            <button onclick="format('justifyCenter')" class="toolbar-btn" title="Align Center"><i data-lucide="align-center" class="w-4 h-4"></i></button>
+                            <button onclick="format('removeFormat')" class="toolbar-btn" title="Clear Formatting"><i data-lucide="eraser" class="w-4 h-4"></i></button>
+                        </div>
+                        
+                        <!-- Content Editable Area -->
+                        <div id="editor" contenteditable="true" data-placeholder="Start writing your secure document..." class="editor-surface rich-content p-8 bg-white overflow-y-auto" oninput="updateStats()"></div>
+                        
+                        <!-- Stats Footer -->
+                        <div class="bg-slate-50 border-t px-6 py-2 flex justify-between text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                            <div class="flex gap-4">
+                                <span id="word-count">0 Words</span>
+                                <span id="char-count">0 Characters</span>
+                            </div>
+                            <span>Secured by CryptoDoc Engine</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar Controls -->
+                <div class="w-full lg:w-80 space-y-4 shrink-0">
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2">
+                            <i data-lucide="lock" class="w-4 h-4 text-indigo-600"></i>
+                            Security Settings
+                        </h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="text-xs font-bold text-slate-400 uppercase mb-1.5 block">Document Password</label>
+                                <input type="password" id="write-password" placeholder="Choose a strong password" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+                            </div>
+                            <button onclick="saveAsEncryptedPDF()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-3 transition-all shadow-lg shadow-indigo-200 active:scale-[0.98]">
+                                <i data-lucide="download" class="w-5 h-5"></i>
+                                Save CryptoDoc PDF
+                            </button>
+                        </div>
+                    </div>
+                    <div class="bg-indigo-50 p-4 rounded-2xl border border-indigo-100">
+                        <p class="text-xs text-indigo-700 leading-relaxed">
+                            <strong>Note:</strong> Your password is the only key. If forgotten, your document cannot be unlocked. CryptoDoc never stores your password.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 2: UPLOAD & DECRYPT -->
+        <div id="section-decrypt" class="hidden space-y-6 max-w-2xl mx-auto animate-in fade-in zoom-in duration-300">
+            <div class="bg-white rounded-3xl shadow-xl border border-slate-200 p-10 text-center" id="upload-zone">
+                <div class="bg-indigo-50 w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 transform rotate-3">
+                    <i data-lucide="file-key" class="w-10 h-10 text-indigo-600"></i>
+                </div>
+                <h2 class="text-2xl font-bold mb-2">CryptoDoc Vault Access</h2>
+                <p class="text-slate-500 mb-8">Upload your encrypted PDF to unlock its contents.</p>
+                
+                <input type="file" id="pdf-upload" accept=".pdf" class="hidden" onchange="handleFileUpload(event)">
+                
+                <div class="space-y-4">
+                    <button onclick="document.getElementById('pdf-upload').click()" id="upload-btn-ui" class="group w-full bg-slate-50 hover:bg-white hover:border-indigo-400 text-slate-600 py-6 rounded-2xl border-2 border-dashed border-slate-300 font-semibold transition-all flex flex-col items-center gap-2">
+                        <i data-lucide="upload-cloud" class="w-6 h-6 text-slate-400 group-hover:text-indigo-500"></i>
+                        <span id="file-status">Select your CryptoDoc PDF</span>
+                    </button>
+
+                    <div class="relative">
+                        <input type="password" id="decrypt-password" placeholder="Enter file password" class="w-full px-5 py-4 rounded-2xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-center text-lg">
+                    </div>
+
+                    <button onclick="decryptAndRead()" class="w-full bg-slate-900 hover:bg-black text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-3 transition-all shadow-xl shadow-slate-200">
+                        <i data-lucide="unlock" class="w-5 h-5"></i>
+                        Open Secure Document
+                    </button>
+                </div>
+            </div>
+
+            <!-- Read Only Viewer -->
+            <div id="read-viewer" class="hidden space-y-4 animate-in slide-in-from-bottom-10 duration-500">
+                <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
+                    <div class="bg-slate-900 text-white px-6 py-4 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="eye" class="w-5 h-5 text-indigo-400"></i>
+                            <span class="font-bold tracking-tight">Decrypted by CryptoDoc</span>
+                        </div>
+                        <button onclick="closeViewer()" class="p-1 hover:bg-white/10 rounded-lg transition-colors">
+                            <i data-lucide="x" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                    <div id="decrypted-text" class="rich-content p-10 bg-white min-h-[400px] prose prose-slate"></div>
+                </div>
+                <div class="flex items-center justify-center gap-2 text-slate-400 text-sm">
+                    <i data-lucide="shield-check" class="w-4 h-4"></i>
+                    Secure CryptoDoc Session Active
+                </div>
+            </div>
+        </div>
+
+        <!-- Notification Toast -->
+        <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-8 py-4 rounded-2xl shadow-2xl transition-all opacity-0 translate-y-10 pointer-events-none z-[100] flex items-center gap-3">
+            <i data-lucide="info" class="w-5 h-5 text-indigo-400" id="toast-icon"></i>
+            <span id="toast-text" class="font-medium">Message</span>
+        </div>
+    </main>
+
+    <script>
+        // Initialize Icons
+        lucide.createIcons();
+
+        let uploadedFileData = null;
+
+        // Rich Text Formatting
+        function format(command, value = null) {
+            document.execCommand(command, false, value);
+            document.getElementById('editor').focus();
+            updateStats();
+        }
+
+        function updateStats() {
+            const editor = document.getElementById('editor');
+            const text = editor.innerText.trim();
+            const words = text ? text.split(/\s+/).length : 0;
+            const chars = text.length;
+            document.getElementById('word-count').innerText = `${words} Word${words !== 1 ? 's' : ''}`;
+            document.getElementById('char-count').innerText = `${chars} Character${chars !== 1 ? 's' : ''}`;
+        }
+
+        // --- Tab Switching ---
+        function switchTab(tab) {
+            const sections = { write: 'section-write', decrypt: 'section-decrypt' };
+            const tabs = { write: 'tab-write', decrypt: 'tab-decrypt' };
+            
+            Object.keys(sections).forEach(key => {
+                document.getElementById(sections[key]).classList.toggle('hidden', key !== tab);
+                const tabEl = document.getElementById(tabs[key]);
+                if (key === tab) {
+                    tabEl.classList.add('bg-white', 'shadow-sm', 'text-indigo-600');
+                    tabEl.classList.remove('text-slate-500');
+                } else {
+                    tabEl.classList.remove('bg-white', 'shadow-sm', 'text-indigo-600');
+                    tabEl.classList.add('text-slate-500');
+                }
+            });
+        }
+
+        // --- Notification Helper ---
+        function showToast(msg, isError = false) {
+            const toast = document.getElementById('toast');
+            const text = document.getElementById('toast-text');
+            text.innerText = msg;
+            toast.classList.remove('opacity-0', 'translate-y-10');
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-10');
+            }, 3000);
+        }
+
+        // --- Crypto Logic ---
+        async function deriveKey(password, salt) {
+            const enc = new TextEncoder();
+            const keyMaterial = await window.crypto.subtle.importKey(
+                "raw", enc.encode(password), "PBKDF2", false, ["deriveKey"]
+            );
+            return window.crypto.subtle.deriveKey(
+                { name: "PBKDF2", salt, iterations: 100000, hash: "SHA-256" },
+                keyMaterial,
+                { name: "AES-GCM", length: 256 },
+                false, ["encrypt", "decrypt"]
+            );
+        }
+
+        async function encryptText(text, password) {
+            const salt = window.crypto.getRandomValues(new Uint8Array(16));
+            const iv = window.crypto.getRandomValues(new Uint8Array(12));
+            const key = await deriveKey(password, salt);
+            const enc = new TextEncoder();
+            const encrypted = await window.crypto.subtle.encrypt(
+                { name: "AES-GCM", iv }, key, enc.encode(text)
+            );
+            const combined = new Uint8Array(16 + 12 + encrypted.byteLength);
+            combined.set(salt, 0);
+            combined.set(iv, 16);
+            combined.set(new Uint8Array(encrypted), 28);
+            return btoa(String.fromCharCode(...combined));
+        }
+
+        async function decryptText(base64Data, password) {
+            try {
+                const combined = new Uint8Array(atob(base64Data).split("").map(c => c.charCodeAt(0)));
+                const salt = combined.slice(0, 16);
+                const iv = combined.slice(16, 28);
+                const encrypted = combined.slice(28);
+                const key = await deriveKey(password, salt);
+                const decrypted = await window.crypto.subtle.decrypt(
+                    { name: "AES-GCM", iv }, key, encrypted
+                );
+                return new TextDecoder().decode(decrypted);
+            } catch (e) {
+                throw new Error("Incorrect password or corrupted file.");
+            }
+        }
+
+        // --- File Operations ---
+        async function saveAsEncryptedPDF() {
+            const editor = document.getElementById('editor');
+            const html = editor.innerHTML;
+            const password = document.getElementById('write-password').value;
+
+            if (editor.innerText.trim().length < 1) return showToast("Document is empty!", true);
+            if (!password) return showToast("Please set a password.", true);
+
+            try {
+                const encryptedBase64 = await encryptText(html, password);
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                doc.setFontSize(24);
+                doc.setTextColor(79, 70, 229);
+                doc.text("CryptoDoc Secure Vault", 20, 30);
+                
+                doc.setFontSize(10);
+                doc.setTextColor(148, 163, 184);
+                doc.text("LOCKED DOCUMENT • GENERATED: " + new Date().toLocaleString(), 20, 38);
+                
+                doc.setDrawColor(226, 232, 240);
+                doc.line(20, 45, 190, 45);
+
+                doc.setTextColor(71, 85, 105);
+                doc.setFontSize(11);
+                doc.text("This file is encrypted. Access is only possible through CryptoDoc.", 20, 60);
+                
+                const marker = "::CRYPTDATA_START::";
+                const endMarker = "::CRYPTDATA_END::";
+                const payload = marker + encryptedBase64 + endMarker;
+
+                doc.setFontSize(1);
+                doc.setTextColor(255, 255, 255);
+                const splitText = doc.splitTextToSize(payload, 180);
+                doc.text(splitText, 20, 120);
+
+                doc.save(`CryptoDoc_${Date.now()}.pdf`);
+                showToast("CryptoDoc PDF downloaded successfully.");
+            } catch (err) {
+                showToast("Error securing document.", true);
+            }
+        }
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                uploadedFileData = e.target.result;
+                document.getElementById('file-status').innerText = file.name;
+                document.getElementById('upload-btn-ui').classList.add('border-indigo-500', 'bg-indigo-50');
+                showToast("Document loaded.");
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        async function decryptAndRead() {
+            const password = document.getElementById('decrypt-password').value;
+            if (!uploadedFileData) return showToast("Upload a file first.", true);
+            if (!password) return showToast("Password required.", true);
+
+            try {
+                const textDecoder = new TextDecoder();
+                const pdfString = textDecoder.decode(new Uint8Array(uploadedFileData));
+                
+                const startMarker = "::CRYPTDATA_START::";
+                const endMarker = "::CRYPTDATA_END::";
+                
+                const startIndex = pdfString.indexOf(startMarker);
+                const endIndex = pdfString.indexOf(endMarker);
+
+                if (startIndex === -1 || endIndex === -1) {
+                    throw new Error("This doesn't look like a CryptoDoc file.");
+                }
+
+                let dataToDecrypt = pdfString.substring(startIndex + startMarker.length, endIndex);
+                dataToDecrypt = dataToDecrypt.replace(/\\/g, '').replace(/\r?\n|\r/g, '');
+
+                const decryptedHtml = await decryptText(dataToDecrypt, password);
+                
+                document.getElementById('decrypted-text').innerHTML = decryptedHtml;
+                document.getElementById('upload-zone').classList.add('hidden');
+                document.getElementById('read-viewer').classList.remove('hidden');
+                showToast("Document Unlocked.");
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        function closeViewer() {
+            document.getElementById('decrypted-text').innerHTML = "";
+            document.getElementById('read-viewer').classList.add('hidden');
+            document.getElementById('upload-zone').classList.remove('hidden');
+            document.getElementById('decrypt-password').value = "";
+            uploadedFileData = null;
+            document.getElementById('file-status').innerText = "Select your CryptoDoc PDF";
+            document.getElementById('upload-btn-ui').classList.remove('border-indigo-500', 'bg-indigo-50');
+            document.getElementById('pdf-upload').value = "";
+        }
+    </script>
+</body>
+</html>
