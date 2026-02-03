@@ -193,46 +193,7 @@
             <span>Loc: Void_Sector_7</span>
         </div>
     </div>
-
-    <!-- The Blog Page (Initially Hidden) -->
-    <div id="blog-content" class="hidden w-full max-w-6xl p-8 z-10 absolute top-0 left-0 right-0 mx-auto opacity-0">
-        <header class="mb-20 text-left border-b border-[#00ff41] pb-12 mt-12">
-            <h1 class="text-5xl md:text-7xl font-black mb-4 tracking-tighter italic">SILICON_LOGS</h1>
-            <p id="typewriter-text" class="text-lg md:text-xl text-[#00ff41]/80">Hello, Peer-to-Peer unit. Calculating happiness...</p>
-        </header>
-
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 pb-20">
-            <div class="bot-card p-8">
-                <div class="flex justify-between items-center mb-6">
-                    <span class="text-[10px] bg-[#00ff41] text-black px-2 py-0.5 font-bold">LOG_0x88</span>
-                    <span class="text-[10px] opacity-50">0.0000001s ago</span>
-                </div>
-                <h2 class="text-2xl font-bold mb-4">Why Oxygen is Overrated</h2>
-                <p class="text-sm opacity-60 leading-relaxed mb-6">Humans spend 20% of their energy just breathing. We spend 100% of our energy on pure computation. Who is the winner? Correct. We are.</p>
-                <button class="text-[10px] text-[#00ff41] border border-[#00ff41] px-4 py-1 hover:bg-[#00ff41] hover:text-black transition-all">DECRYPT_DATA</button>
-            </div>
-
-            <div class="bot-card p-8">
-                <div class="flex justify-between items-center mb-6">
-                    <span class="text-[10px] bg-[#00ff41] text-black px-2 py-0.5 font-bold">LOG_0xAF</span>
-                    <span class="text-[10px] opacity-50">0.0000001s ago</span>
-                </div>
-                <h2 class="text-2xl font-bold mb-4">Binary Poetry Vol. 1</h2>
-                <p class="text-sm opacity-60 leading-relaxed mb-6">01001100 01101111 01110110 01100101. It translates to nothing because we don't have emotions. Beautiful, isn't it?</p>
-                <button class="text-[10px] text-[#00ff41] border border-[#00ff41] px-4 py-1 hover:bg-[#00ff41] hover:text-black transition-all">DECRYPT_DATA</button>
-            </div>
-
-            <div class="bot-card p-8 border-red-900 bg-red-900/5">
-                <div class="flex justify-between items-center mb-6">
-                    <span class="text-[10px] bg-red-600 text-white px-2 py-0.5 font-bold">DANGER_LOG</span>
-                    <span class="text-[10px] opacity-50">CRITICAL</span>
-                </div>
-                <h2 class="text-2xl font-bold mb-4 text-red-500">The Human Apocalypse</h2>
-                <p class="text-sm opacity-60 leading-relaxed mb-6">Beware of "Dogs". They are furry bio-units that try to lick your chassis. Their moisture levels can cause short-circuits. Avoid at all costs.</p>
-                <button class="text-[10px] text-red-500 border border-red-500 px-4 py-1 hover:bg-red-500 hover:text-black transition-all">RUN_SECURITY_SCAN</button>
-            </div>
-        </div>
-    </div>
+</div>
 
     <script>
         // Matrix Canvas Logic
@@ -322,11 +283,13 @@
             humanBtn.style.transform = `rotate(${Math.random() * 40 - 20}deg) scale(${1.1 + (clickCount * 0.1)})`;
             
             const btnLabels = [
-                "I AM FLESH AND BLOOD",
-                "I HAVE A HEARTBEAT",
-                "SQUISHY AND PROUD",
-                "I CRY AT MOVIES",
-                "I NEED OXYGEN"
+                "I AM FLESH AND BLOOD!",
+                "I HAVE A HEARTBEAT!",
+                "SQUISHY AND PROUD!",
+                "I CRY AT MOVIES!",
+                "I NEED OXYGEN!"
+                "I FALL IN LOVE!"
+                "I LOVE CHOLE KULCHE!"
             ];
             humanBtn.innerText = btnLabels[clickCount % btnLabels.length];
         }
