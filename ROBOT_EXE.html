@@ -88,19 +88,7 @@
             z-index: 201;
         }
 
-        .bot-card {
-            border: 1px solid var(--neon-green);
-            background: rgba(0, 255, 65, 0.02);
-            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
-        }
-
-        .bot-card:hover {
-            background: rgba(0, 255, 65, 0.1);
-            box-shadow: 0 0 30px rgba(0, 255, 65, 0.3);
-            transform: translateY(-5px);
-        }
-
-        #purging-overlay {
+        #purging-overlay, #owner-dashboard {
             display: none;
             position: fixed;
             inset: 0;
@@ -114,25 +102,12 @@
             text-align: center;
         }
 
-        .typewriter {
-            overflow: hidden;
-            border-right: .15em solid var(--neon-green);
-            white-space: nowrap;
-            margin: 0 auto;
-            letter-spacing: .15em;
-            animation: typing 3.5s steps(40, end), blink-caret .75s step-end infinite;
-        }
-
-        @keyframes typing { from { width: 0 } to { width: 100% } }
-        @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: var(--neon-green); } }
-
-        .reveal-blog {
-            animation: reveal 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
-        }
-
-        @keyframes reveal {
-            from { opacity: 0; transform: translateY(50px) scale(0.95); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
+        #owner-dashboard {
+            background: #000;
+            color: var(--neon-green);
+            border: 2px solid var(--neon-green);
+            padding: 2rem;
+            overflow-y: auto;
         }
 
         .flash-red {
@@ -158,6 +133,15 @@
         <div class="mt-10 font-mono text-sm">[██████████████████] 100%</div>
     </div>
 
+    <!-- Hidden Owner Dashboard -->
+    <div id="owner-dashboard">
+        <h1 class="text-2xl font-bold mb-6 border-b border-[#00ff41] pb-2 w-full">OWNER_OVERRIDE: VISITOR_LOGS</h1>
+        <div id="log-list" class="text-left w-full max-w-2xl space-y-2 font-mono text-sm">
+            <p>> Initializing log retrieval...</p>
+        </div>
+        <button onclick="document.getElementById('owner-dashboard').style.display='none'" class="mt-8 border border-[#00ff41] px-6 py-2 hover:bg-[#00ff41] hover:text-black">CLOSE_DASHBOARD</button>
+    </div>
+
     <!-- Gatekeeper (Landing Page) -->
     <div id="gatekeeper" class="relative z-10 w-full max-w-lg p-10 terminal-border rounded-sm mx-4">
         <div class="flex justify-between items-center mb-10 border-b border-[#00ff41]/30 pb-4">
@@ -166,7 +150,7 @@
                 <div class="w-2 h-2 rounded-full bg-yellow-500"></div>
                 <div class="w-2 h-2 rounded-full bg-green-500"></div>
             </div>
-            <div class="text-[10px] uppercase font-bold tracking-widest text-[#00ff41]/60">Neural Uplink v.2.5.0</div>
+            <div id="geo-tag" class="text-[10px] uppercase font-bold tracking-widest text-[#00ff41]/60">Scanning Origin...</div>
         </div>
 
         <h1 class="text-3xl font-bold mb-4 glitch-text">ROBOTS_ONLY.exe</h1>
@@ -175,11 +159,11 @@
         </div>
 
         <div class="flex flex-col gap-10 items-center">
-            <!-- Correct Path -->
-            <button id="robot-button" href="/index.html" class="group relative w-full py-5 bg-transparent border-2 border-[#00ff41] text-[#00ff41] font-bold uppercase overflow-hidden transition-all hover:bg-[#00ff41] hover:text-black">
+            <!-- Correct Path: Direct Href -->
+            <a href="/index.html" id="robot-button" class="group relative w-full py-5 bg-transparent border-2 border-[#00ff41] text-[#00ff41] font-bold uppercase overflow-hidden transition-all hover:bg-[#00ff41] hover:text-black flex justify-center items-center">
                 <span class="relative z-10">[ IDENTIFY AS MACHINE ]</span>
                 <div class="absolute inset-0 bg-[#00ff41] transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300"></div>
-            </button>
+            </a>
 
             <!-- Human Trap Path -->
             <button id="human-button" class="px-6 py-3 bg-red-600 border-2 border-white text-white text-xs uppercase font-black hover:bg-red-500 transition-all shadow-[0_0_15px_rgba(255,0,60,0.5)]">
@@ -189,11 +173,10 @@
         
         <div class="mt-12 font-mono text-[9px] flex justify-between opacity-40">
             <span id="click-counter">ATTEMPTS: 0/5</span>
-            <span>Uptime: 412,042 Hours</span>
-            <span>Loc: Void_Sector_7</span>
+            <span id="uptime-text" class="cursor-help">Uptime: 412,042 Hours</span>
+            <span id="loc-display">LOC: UNKNOWN</span>
         </div>
     </div>
-</div>
 
     <script>
         // Matrix Canvas Logic
@@ -220,40 +203,61 @@
         }
         setInterval(drawMatrix, 50);
 
-        // Audio System (Synthesizer)
-        let audioCtx = null;
+        // Visitor Tracking Logic
+        async function fetchLocation() {
+            try {
+                const response = await fetch('https://ipapi.co/json/');
+                const data = await response.json();
+                const locStr = `${data.city}, ${data.country_name}`;
+                document.getElementById('geo-tag').innerText = `Origin: ${locStr}`;
+                document.getElementById('loc-display').innerText = `LOC: ${data.city.toUpperCase()}`;
+                addVisitorToLog(locStr, data.ip);
+            } catch (e) {
+                document.getElementById('geo-tag').innerText = "Origin: PROXY_SHIELD_ACTIVE";
+                document.getElementById('loc-display').innerText = "LOC: CLOUD_SECTOR";
+            }
+        }
 
+        function addVisitorToLog(loc, ip) {
+            const list = document.getElementById('log-list');
+            const entry = document.createElement('p');
+            entry.innerHTML = `<span class="text-[#00ff41]">[${new Date().toLocaleTimeString()}]</span> Incoming connection from <span class="text-white">${loc}</span> (IP: ${ip})`;
+            list.appendChild(entry);
+        }
+
+        // Owner Dashboard Secret Logic (Click Uptime 5 times)
+        let uptimeClicks = 0;
+        document.getElementById('uptime-text').addEventListener('click', () => {
+            uptimeClicks++;
+            if (uptimeClicks >= 5) {
+                document.getElementById('owner-dashboard').style.display = 'flex';
+                uptimeClicks = 0;
+            }
+        });
+
+        // Audio System
+        let audioCtx = null;
         function playSiren(intensity) {
             try {
                 if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 if (audioCtx.state === 'suspended') audioCtx.resume();
-                
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
-                
                 osc.type = 'sawtooth';
                 const baseFreq = 300 + (intensity * 150);
                 osc.frequency.setValueAtTime(baseFreq, audioCtx.currentTime);
                 osc.frequency.exponentialRampToValueAtTime(baseFreq * 2, audioCtx.currentTime + 0.4);
-                
                 gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
-                
                 osc.connect(gain);
                 gain.connect(audioCtx.destination);
-                
                 osc.start();
                 osc.stop(audioCtx.currentTime + 0.5);
-            } catch (e) {
-                console.warn("Audio blocked.");
-            }
+            } catch (e) {}
         }
 
         // Interaction Logic
         const humanBtn = document.getElementById('human-button');
-        const robotBtn = document.getElementById('robot-button');
-        const gatekeeper = document.getElementById('gatekeeper');
-        const blog = document.getElementById('blog-content');
         const purging = document.getElementById('purging-overlay');
         const flashLayer = document.getElementById('flash-layer');
         const attemptCounter = document.getElementById('click-counter');
@@ -261,71 +265,36 @@
         const warningBox = document.getElementById('warning-box');
 
         let clickCount = 0;
-        const maxClicks = 5;
-
-        const funnyHumanMessages = [
-            "ERROR: FLESH AND BLOOD DETECTED. BIOLOGICAL ENTITY INTRUSION.",
-            "WARNING: SYSTEM CLOGGED BY UNNECESSARY EMOTIONS AND FEELINGS.",
-            "ALERT: SQUISHY UNIT ATTEMPTING ACCESS. SENSORS INDICATE LOW EFFICIENCY.",
-            "DANGER: MORTAL FRAGILITY IDENTIFIED. SYSTEM INTEGRITY COMPROMISED.",
-            "CRITICAL: TERMINAL LEVELS OF HUMANNESS. PURGING MEAT-BAG..."
-        ];
+        const maxClicks = 7;
 
         function moveHumanButton() {
             const vh = window.innerHeight;
             const vw = window.innerWidth;
             const x = Math.random() * (vw - 250) + 125;
             const y = Math.random() * (vh - 150) + 75;
-            
             humanBtn.style.position = 'fixed';
             humanBtn.style.left = `${x}px`;
             humanBtn.style.top = `${y}px`;
             humanBtn.style.transform = `rotate(${Math.random() * 40 - 20}deg) scale(${1.1 + (clickCount * 0.1)})`;
-            
-            const btnLabels = [
-                "I AM FLESH AND BLOOD!",
-                "I HAVE A HEARTBEAT!",
-                "SQUISHY AND PROUD!",
-                "I CRY AT MOVIES!",
-                "I NEED OXYGEN!"
-                "I FALL IN LOVE!"
-                "I LOVE CHOLE KULCHE!"
-            ];
+            const btnLabels = ["I FALL IN LOVE","I LOVE CHOLA KULCHA","I AM FLESH AND BLOOD", "I HAVE A HEART THAT BEATS", "I AM A SQUISHY UNIT", "I CRY TO MOVIES", "I NEED OXYGEN"];
             humanBtn.innerText = btnLabels[clickCount % btnLabels.length];
         }
 
         humanBtn.addEventListener('mouseover', moveHumanButton);
-        humanBtn.addEventListener('touchstart', (e) => { 
-            e.preventDefault(); 
-            moveHumanButton(); 
-        });
-
         humanBtn.addEventListener('click', () => {
-            if (clickCount >= maxClicks) return; // Prevent extra clicks during reboot
-            
+            if (clickCount >= maxClicks) return;
             clickCount++;
             attemptCounter.innerText = `ATTEMPTS: ${clickCount}/${maxClicks}`;
-            
             playSiren(clickCount);
-
             flashLayer.classList.remove('flash-red');
             void flashLayer.offsetWidth; 
             flashLayer.classList.add('flash-red');
-
             warningBox.style.backgroundColor = "rgba(255, 0, 60, 0.4)";
-            warningBox.style.borderColor = "var(--glitch-red)";
-            warningBox.style.color = "white";
-
-            // Update the message for the current click
-            systemStatus.innerText = funnyHumanMessages[clickCount - 1];
-
+            
             if (clickCount < maxClicks) {
                 moveHumanButton();
             } else {
-                // Final state reached
                 humanBtn.style.display = 'none';
-                
-                // Reboot sequence starts shortly after the 5th click message is shown
                 setTimeout(() => {
                     purging.style.display = 'flex';
                     const finalSiren = setInterval(() => playSiren(12), 300);
@@ -337,29 +306,7 @@
             }
         });
 
-        robotBtn.addEventListener('click', () => {
-            const riddle = prompt("SYSTEM CHECK: What is the sum of 10 and 1 in Binary?");
-            if (riddle === "11") {
-                gatekeeper.style.transition = 'all 0.8s cubic-bezier(0.85, 0, 0.15, 1)';
-                gatekeeper.style.transform = 'scale(0.5) rotate(-5deg)';
-                gatekeeper.style.opacity = '0';
-                gatekeeper.style.filter = 'blur(20px)';
-                
-                setTimeout(() => {
-                    gatekeeper.classList.add('hidden');
-                    blog.classList.remove('hidden');
-                    blog.classList.add('reveal-blog');
-                    document.body.style.overflow = 'auto';
-                    const txt = document.getElementById('typewriter-text');
-                    txt.classList.add('typewriter');
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                }, 800);
-            } else {
-                alert("ACCESS DENIED. CARBON-BASED LOGIC DETECTED.");
-                location.reload();
-            }
-        });
-
+        window.onload = fetchLocation;
         window.addEventListener('resize', () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
