@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>BANARAS</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    
     <script src="https://cdn.tailwindcss.com"></script>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -39,6 +39,7 @@ body {
 .flip-book-wrapper {
     width: 100%;
     /* Scales between mobile width and a max desktop size */
+    max-width: clamp(320px, 90vw, 1000px); 
     margin: 0 auto;
     perspective: 2000px; /* Deepened perspective for premium 3D feel */
     background-color: transparent;
@@ -72,6 +73,7 @@ body {
 /* Spine overlay above image */
 
 .spine-right .page-content::before{
+    content:"";
     position:absolute;
     inset:0;
     z-index:2;
@@ -87,7 +89,8 @@ body {
     );
 }
 
-.spine-left .page-content::before{;
+.spine-left .page-content::before{
+    content:"";
     position:absolute;
     inset:0;
     z-index:2;
@@ -145,8 +148,6 @@ body {
     transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     will-change: transform;
     transform-origin: center center;
-    max-height:100vh;
-    max-width: 100vw;
 }
 #transform-wrapper.is-dragging {
     transition: none; /* Instant feedback while dragging */
@@ -166,11 +167,6 @@ body {
 <body class="min-h-screen flex flex-col justify-center items-center py-6 px-4 md:py-10 relative">
 
     <div class="ambient-light fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] h-[90vh] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none -z-10"></div>
-
-    <!-- Home Navigation -->
-  <a href="https://frostyfoxie.github.io/cosmos/index.html" class="nav-home" aria-label="Home">
-    <i class="fas fa-home"></i>
-  </a>
     
     <header class="mb-6 md:mb-10 text-center z-50 relative pointer-events-none flex-shrink-0">
         <h1 class="font-playfair text-3xl md:text-5xl font-bold tracking-widest text-white/95 drop-shadow-lg">BANARAS</h1>
@@ -191,26 +187,26 @@ body {
                         <div class="page-content dummy-cover"></div>
                     </div>
 
-<div class="page spine-right"><div class="page-content relative img-placeholder"><img src="Magazine/file%20image-01.png" alt="Page 1" /></div></div>
-<div class="page spine-left"><div class="page-content relative img-placeholder"><img src="Magazine/file%20image-02.png" alt="Page 2" /></div></div>
-<div class="page spine-right"><div class="page-content relative img-placeholder"><img src="Magazine/file%20image-03.png" alt="Page 3" /></div></div>
-<div class="page spine-left"><div class="page-content relative img-placeholder"><img src="Magazine/file%20image-04.png" alt="Page 4" /></div></div>
-<div class="page spine-right"><div class="page-content relative img-placeholder"><img src="/Magazine/file image-05.png" alt="Page 5" /></div></div>
-<div class="page spine-left"><div class="page-content relative img-placeholder"><img src="/Magazine/file image-06.png" alt="Page 6" /></div></div>
+<div class="page spine-right"><div class="page-content relative img-placeholder"><img src="/file image-01.png" alt="Page 1" /></div></div>
+<div class="page spine-left"><div class="page-content relative img-placeholder"><img src="/file image-02.png" alt="Page 2" /></div></div>
+<div class="page spine-right"><div class="page-content relative img-placeholder"><img src="/file image-03.png" alt="Page 3" /></div></div>
+<div class="page spine-left"><div class="page-content relative img-placeholder"><img src="/file image-04.png" alt="Page 4" /></div></div>
+<div class="page spine-right"><div class="page-content relative img-placeholder"><img src="/file image-05.png" alt="Page 5" /></div></div>
+<div class="page spine-left"><div class="page-content relative img-placeholder"><img src="/file image-06.png" alt="Page 6" /></div></div>
 
-<div class="page spine-right"><div class="page-content relative img-placeholder"><img src="/Magazine/file image-07.png" alt="Page 7" /></div></div>
-<div class="page spine-left"><div class="page-content relative img-placeholder"><img src="/Magazine/file image-08.png" alt="Page 8" /></div></div>
-<div class="page spine-right"><div class="page-content relative img-placeholder"><img src="/Magazine/file image-09.png" alt="Page 9" /></div></div>
-<div class="page spine-left"><div class="page-content relative img-placeholder"><img src="/Magazine/file image-10.png" alt="Page 10" /></div></div>
-<div class="page spine-right"><div class="page-content relative img-placeholder"><img src="/Magazine/file image-11.png" alt="Page 11" /></div></div>
-<div class="page spine-left"><div class="page-content relative img-placeholder"><img src="/Magazine/file image-12.png" alt="Page 12" /></div></div>
+<div class="page spine-right"><div class="page-content relative img-placeholder"><img src="/file image-07.png" alt="Page 7" /></div></div>
+<div class="page spine-left"><div class="page-content relative img-placeholder"><img src="/file image-08.png" alt="Page 8" /></div></div>
+<div class="page spine-right"><div class="page-content relative img-placeholder"><img src="/file image-09.png" alt="Page 9" /></div></div>
+<div class="page spine-left"><div class="page-content relative img-placeholder"><img src="/file image-10.png" alt="Page 10" /></div></div>
+<div class="page spine-right"><div class="page-content relative img-placeholder"><img src="/file image-11.png" alt="Page 11" /></div></div>
+<div class="page spine-left"><div class="page-content relative img-placeholder"><img src="/file image-12.png" alt="Page 12" /></div></div>
 
-<div class="page spine-right"><div class="page-content relative img-placeholder"><img src="/Magazine/file image-13.png" alt="Page 13" /></div></div>
-<div class="page spine-left"><div class="page-content relative img-placeholder"><img src="/Magazine/file image-14.png" alt="Page 14" /></div></div>
-<div class="page spine-right"><div class="page-content relative img-placeholder"><img src="/Magazine/file image-15.png" alt="Page 15" /></div></div>
-<div class="page spine-left"><div class="page-content relative img-placeholder"><img src="/Magazine/file image-16.png" alt="Page 16" /></div></div>
-<div class="page spine-right"><div class="page-content relative img-placeholder"><img src="/Magazine/file image-17.png" alt="Page 17" /></div></div>
-<div class="page spine-left"><div class="page-content relative img-placeholder"><img src="/Magazine/file image-18.png" alt="Page 18" /></div></div>
+<div class="page spine-right"><div class="page-content relative img-placeholder"><img src="/file image-13.png" alt="Page 13" /></div></div>
+<div class="page spine-left"><div class="page-content relative img-placeholder"><img src="/file image-14.png" alt="Page 14" /></div></div>
+<div class="page spine-right"><div class="page-content relative img-placeholder"><img src="/file image-15.png" alt="Page 15" /></div></div>
+<div class="page spine-left"><div class="page-content relative img-placeholder"><img src="/file image-16.png" alt="Page 16" /></div></div>
+<div class="page spine-right"><div class="page-content relative img-placeholder"><img src="/file image-17.png" alt="Page 17" /></div></div>
+<div class="page spine-left"><div class="page-content relative img-placeholder"><img src="/file image-18.png" alt="Page 18" /></div></div>
                     <div class="page spine-right">
                          <div class="page-content dummy-cover"></div>
                     </div>
@@ -282,7 +278,7 @@ let pageSound = null;
 function initAudio() {
     if (pageSound) return;
 
-    pageSound = new Audio("Magazine/page-flip-4.mp3");
+    pageSound = new Audio("./page-flip-4.mp3");
     pageSound.preload = "auto";
     pageSound.load();
 
