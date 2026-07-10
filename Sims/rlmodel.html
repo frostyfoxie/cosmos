@@ -702,7 +702,7 @@
                 this.platEdge = new THREE.LineSegments(edgeGeo, edgeMat);
                 this.platMesh.add(this.platEdge);
 
-                // CUTE CARTOON BALL UPGRADE WITH PHYSICAL ROLLING EYES
+                // CUTE CARTOON BALL UPGRADE WITH PHYSICAL ROLLING EYES!
                 this.ballGroup = new THREE.Group();
                 
                 const ballGeo = new THREE.SphereGeometry(BALL_RADIUS, 32, 32);
@@ -714,7 +714,7 @@
                 this.ballCoreMesh = new THREE.Mesh(ballGeo, ballMat);
                 this.ballGroup.add(this.ballCoreMesh);
 
-                // Add 3D white eyes and black pupils on the front of the rolling ball!
+                /* // Add 3D white eyes and black pupils on the front of the rolling ball
                 const eyeGeo = new THREE.SphereGeometry(0.08, 16, 16);
                 const eyeMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
                 const pupilMat = new THREE.MeshBasicMaterial({ color: 0x1e293b });
@@ -731,7 +731,7 @@
                 const rightPupil = new THREE.Mesh(new THREE.SphereGeometry(0.045, 8, 8), pupilMat);
                 rightPupil.position.set(-0.13, 0.15, BALL_RADIUS - 0.02);
                 this.ballGroup.add(rightEye);
-                this.ballGroup.add(rightPupil);
+                this.ballGroup.add(rightPupil);*/
 
                 scene.add(this.platMesh);
                 scene.add(this.ballGroup);
