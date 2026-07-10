@@ -1,0 +1,1677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NeuroBalance Garden - Learn Reinforcement Learning</title>
+    <!-- Tailwind CSS for modern playful and adaptive UI styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for friendly, highly legible typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Quicksand:wght@400..700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons for UI labels and indicators -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js for real-time progress visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: #f0f9ff;
+            overflow: hidden;
+            user-select: none;
+        }
+        h1, h2, h3, h4, .title-font {
+            font-family: 'Fredoka', sans-serif;
+        }
+        /* Glassmorphism interactive panels */
+        .friendly-panel {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 3px solid #e0f2fe;
+            box-shadow: 0 12px 30px -4px rgba(14, 165, 233, 0.15);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        /* Interactive button animations */
+        .btn-playful {
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .btn-playful:hover {
+            transform: translateY(-2px) scale(1.02);
+        }
+        .btn-playful:active {
+            transform: translateY(1px) scale(0.97);
+        }
+        /* Custom curriculum slide transitions */
+        .slide-transition {
+            transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+        }
+        /* Glow animations */
+        .star-glow {
+            filter: drop-shadow(0 0 8px rgba(250, 204, 21, 0.7));
+        }
+        .ai-pulse {
+            animation: pulse-glow 2s infinite alternate;
+        }
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 5px rgba(14, 165, 233, 0.2); }
+            100% { box-shadow: 0 0 15px rgba(14, 165, 233, 0.6); }
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f0f9ff;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #bae6fd;
+            border-radius: 99px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #7dd3fc;
+        }
+    </style>
+</head>
+<body class="w-screen h-screen relative text-slate-700 select-none overflow-hidden">
+
+    <!-- MAIN INTERACTIVE LABORATORY OVERLAY -->
+    <div class="absolute inset-0 z-10 pointer-events-none flex flex-col justify-between p-4">
+        
+        <!-- TOP NAVIGATION BAR -->
+        <header class="flex flex-col sm:flex-row justify-between items-center gap-3 pointer-events-auto w-full">
+            <!-- Title Banner -->
+            <div class="friendly-panel px-5 py-2 rounded-2xl flex items-center gap-4 bg-white">
+                <div class="bg-sky-100 p-2.5 rounded-xl text-sky-500 animate-bounce">
+                    <i class="fa-solid fa-graduation-cap text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-md md:text-lg font-bold tracking-tight text-sky-600 leading-tight">
+                        NeuroBalance Academy 🚀
+                    </h1>
+                    <p class="text-[10px] text-sky-400 font-semibold">The Ultimate 3D Reinforcement Learning Playground</p>
+                </div>
+            </div>
+
+            <!-- Scoreboard and Live Stats -->
+            <div class="flex gap-2 bg-white/80 p-1 rounded-2xl border-2 border-sky-100 backdrop-blur">
+                <div class="friendly-panel px-3 py-1 rounded-xl flex flex-col items-center min-w-[75px] bg-white text-center">
+                    <span class="text-[9px] uppercase font-bold text-slate-400">Generation</span>
+                    <span id="gen" class="text-md font-extrabold text-sky-500">1</span>
+                </div>
+                <div class="friendly-panel px-3 py-1 rounded-xl flex flex-col items-center min-w-[75px] bg-white text-center">
+                    <span class="text-[9px] uppercase font-bold text-slate-400">AI High Score</span>
+                    <span id="best" class="text-md font-extrabold text-amber-500">0.0s</span>
+                </div>
+                <div class="friendly-panel px-3 py-1 rounded-xl flex flex-col items-center min-w-[75px] bg-white text-center">
+                    <span class="text-[9px] uppercase font-bold text-slate-400">Survivors</span>
+                    <span class="text-md font-extrabold text-rose-500"><span id="active">12</span><span class="text-slate-400 text-xs font-semibold">/12</span></span>
+                </div>
+                <div class="friendly-panel px-3 py-1 rounded-xl flex flex-col items-center min-w-[75px] bg-white text-center border-indigo-200">
+                    <span class="text-[9px] uppercase font-bold text-slate-400">Human Record</span>
+                    <span id="human-best" class="text-md font-extrabold text-indigo-500">0.0s</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- MIDDLE COLUMNS: WORKSPACE PANELS -->
+        <div class="flex justify-between items-stretch grow my-3 overflow-hidden gap-4">
+            
+            <!-- LEFT PANEL: LESSONS, MISSIONS, AND REWARD DESIGNER -->
+            <aside id="left-sidebar" class="friendly-panel w-80 md:w-[380px] max-w-[90vw] rounded-3xl p-4 flex flex-col justify-between gap-3 pointer-events-auto bg-white/95 relative">
+                
+                <!-- Tab Switching Panel Header -->
+                <div class="flex bg-slate-100 p-1 rounded-xl gap-1 shrink-0">
+                    <button id="tab-lessons-btn" onclick="switchTab('lessons')" class="flex-1 py-1.5 text-[11px] font-bold rounded-lg transition-all btn-playful bg-white text-sky-600 shadow-sm flex items-center justify-center gap-1">
+                        <i class="fa-solid fa-book"></i> Interactive Lessons
+                    </button>
+                    <button id="tab-controls-btn" onclick="switchTab('controls')" class="flex-1 py-1.5 text-[11px] font-bold rounded-lg transition-all btn-playful text-slate-500 hover:text-slate-700 flex items-center justify-center gap-1">
+                        <i class="fa-solid fa-gears"></i> Engine Sandbox
+                    </button>
+                    <button id="tab-missions-btn" onclick="switchTab('missions')" class="flex-1 py-1.5 text-[11px] font-bold rounded-lg transition-all btn-playful text-slate-500 hover:text-slate-700 flex items-center justify-center gap-1">
+                        <i class="fa-solid fa-gamepad"></i> Game Mode & Missions
+                    </button>
+                </div>
+
+                <!-- SCROLLABLE TAB CONTENTS -->
+                <div class="grow overflow-y-auto pr-1">
+                    
+                    <!-- TAB 1: INTERACTIVE CLASSROOM CURRICULUM & QUIZZES -->
+                    <div id="tab-lessons" class="space-y-3">
+                        <div class="bg-indigo-50 border border-indigo-100 p-3 rounded-2xl relative overflow-hidden">
+                            <div class="absolute top-0 right-0 p-1 bg-indigo-200 rounded-bl-xl text-[8px] font-extrabold text-indigo-700 uppercase">Interactive Guide</div>
+                            <h3 class="text-xs font-bold text-indigo-800 uppercase flex items-center gap-1.5">
+                                <i class="fa-solid fa-graduation-cap text-indigo-500"></i> Reinforcement Learning 101
+                            </h3>
+                            
+                            <!-- Slidable Lessons Content Container -->
+                            <div class="mt-2 text-xs text-slate-600 min-h-[140px] flex flex-col justify-between">
+                                <div id="lesson-text-container" class="slide-transition">
+                                    <!-- Dynamic content loads here -->
+                                </div>
+                                <div class="flex justify-between items-center mt-3 pt-2 border-t border-indigo-100 shrink-0">
+                                    <button id="btn-lesson-prev" class="btn-playful bg-white hover:bg-slate-100 text-indigo-600 border border-indigo-200 px-2.5 py-1 rounded-lg font-bold text-[10px]">
+                                        <i class="fa-solid fa-chevron-left"></i> Back
+                                    </button>
+                                    <span id="lesson-page-indicator" class="text-[10px] font-bold text-indigo-400">Slide 1 / 5</span>
+                                    <button id="btn-lesson-next" class="btn-playful bg-indigo-500 hover:bg-indigo-600 text-white px-3 py-1 rounded-lg font-bold text-[10px]">
+                                        Next <i class="fa-solid fa-chevron-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mini Interactive Quiz Box -->
+                        <div id="quiz-box" class="bg-amber-50 border border-amber-200 p-3 rounded-2xl">
+                            <h4 class="text-xs font-bold text-amber-800 flex items-center gap-1.5">
+                                <i class="fa-solid fa-circle-question text-amber-500"></i> Pop Quiz Challenge!
+                            </h4>
+                            <p id="quiz-question" class="text-[11px] text-slate-600 mt-1.5 font-semibold"></p>
+                            <div id="quiz-options" class="space-y-1.5 mt-2.5">
+                                <!-- Choices dynamically appended -->
+                            </div>
+                            <div id="quiz-feedback" class="text-[10px] font-bold mt-2 text-center hidden"></div>
+                        </div>
+                    </div>
+
+                    <!-- TAB 2: ENGINE SANDBOX (Mutations, Speeds & REWARD FUNCTION DESIGNER) -->
+                    <div id="tab-controls" class="space-y-4 hidden">
+                        <!-- Reward Function Designer Module -->
+                        <div class="bg-emerald-50 border border-emerald-200 p-3 rounded-2xl">
+                            <h3 class="text-xs font-bold text-emerald-800 uppercase tracking-wide flex items-center gap-1.5 mb-1">
+                                <i class="fa-solid fa-pen-ruler text-emerald-500"></i> 1. Reward Engineering Tool
+                            </h3>
+                            <p class="text-[10px] text-slate-500 mb-2.5 leading-relaxed">
+                                Change how the AI learns by changing the criteria for its <strong>"Treats" (Rewards)</strong>:
+                            </p>
+                            
+                            <div class="space-y-1.5">
+                                <label class="block p-2 rounded-xl border bg-white cursor-pointer hover:bg-emerald-100/50 transition-colors" id="reward-opt-balance">
+                                    <input type="radio" name="reward-selector" value="balance" checked class="accent-emerald-600 mr-2">
+                                    <span class="text-xs font-bold text-emerald-800">Target Balancing (Default)</span>
+                                    <span class="block text-[9px] text-slate-500 ml-5">Rewards are highest when the ball sits exactly at the platform's center point.</span>
+                                </label>
+                                
+                                <label class="block p-2 rounded-xl border bg-white cursor-pointer hover:bg-emerald-100/50 transition-colors" id="reward-opt-edge">
+                                    <input type="radio" name="reward-selector" value="edge" class="accent-emerald-600 mr-2">
+                                    <span class="text-xs font-bold text-emerald-800">Edge Rider (Tricky Challenge)</span>
+                                    <span class="block text-[9px] text-slate-500 ml-5">Rewards are highest when the ball balances *near the outer edge* of the platform!</span>
+                                </label>
+
+                                <label class="block p-2 rounded-xl border bg-white cursor-pointer hover:bg-emerald-100/50 transition-colors" id="reward-opt-speed">
+                                    <input type="radio" name="reward-selector" value="speed" class="accent-emerald-600 mr-2">
+                                    <span class="text-xs font-bold text-emerald-800">Roller Coaster (High Velocity)</span>
+                                    <span class="block text-[9px] text-slate-500 ml-5">Rewards the ball for moving fast, forcing the AI to develop spiral movements!</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Physics and Time warp sliders -->
+                        <div class="bg-slate-50 p-3 rounded-2xl border border-slate-150 space-y-3">
+                            <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wide flex items-center gap-1.5">
+                                <i class="fa-solid fa-sliders text-sky-500"></i> 2. Evolutionary Parameters
+                            </h3>
+                            
+                            <!-- Speed factor slider -->
+                            <div>
+                                <div class="flex justify-between items-center text-xs mb-1">
+                                    <span class="text-slate-600 font-bold">Speed up Simulation Time</span>
+                                    <span id="speed-label" class="font-extrabold text-sky-600 bg-sky-100 px-1.5 py-0.5 rounded text-[10px]">1x (Normal)</span>
+                                </div>
+                                <input id="speed-slider" type="range" min="1" max="8" value="1" step="1" 
+                                       class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-sky-500">
+                            </div>
+
+                            <!-- Mutation rate slider -->
+                            <div>
+                                <div class="flex justify-between items-center text-xs mb-1">
+                                    <span class="text-slate-600 font-bold">Synaptic Mutation Rate</span>
+                                    <span id="mutation-label" class="font-extrabold text-purple-600 bg-purple-100 px-1.5 py-0.5 rounded text-[10px]">15%</span>
+                                </div>
+                                <input id="mutation-slider" type="range" min="1" max="100" value="15" 
+                                       class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-purple-500">
+                            </div>
+
+                            <!-- Active Wind factor slider -->
+                            <div>
+                                <div class="flex justify-between items-center text-xs mb-1">
+                                    <span class="text-slate-600 font-bold">Wind Force (Continuous)</span>
+                                    <span id="wind-label" class="font-extrabold text-teal-600 bg-teal-100 px-1.5 py-0.5 rounded text-[10px]">Medium</span>
+                                </div>
+                                <input id="wind-slider" type="range" min="1" max="5" value="2" 
+                                       class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-teal-500">
+                            </div>
+                        </div>
+
+                        <!-- Manual triggers -->
+                        <div class="grid grid-cols-2 gap-2 pt-1 border-t border-slate-100">
+                            <button id="btn-force-gen" class="btn-playful py-2 bg-rose-50 hover:bg-rose-100 border-2 border-rose-200 text-rose-600 text-xs font-bold rounded-xl transition-all">
+                                Skip Generation 🧬
+                            </button>
+                            <button id="btn-reset-run" class="btn-playful py-2 bg-slate-100 hover:bg-slate-200 border-2 border-slate-300 text-slate-600 text-xs font-bold rounded-xl transition-all">
+                                Reset Evolution 🏫
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- TAB 3: HUMAN GAME MODE & CHALLENGE MISSIONS -->
+                    <div id="tab-missions" class="space-y-3 hidden">
+                        <!-- Playable Interactive Component -->
+                        <div class="bg-indigo-50 border border-indigo-200 p-3 rounded-2xl text-center">
+                            <h4 class="text-xs font-bold text-indigo-800 flex items-center gap-1.5 justify-center">
+                                <i class="fa-solid fa-gamepad text-indigo-500"></i> Interactive Human Play Mode
+                            </h4>
+                            <p class="text-[10px] text-slate-500 mt-1 leading-normal">
+                                Think you can balance better than a neural network? Take the steering wheel of the <strong>active inspected platform</strong>!
+                            </p>
+                            
+                            <button id="btn-play-mode" class="btn-playful mt-2.5 w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-md flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-gamepad"></i> <span id="btn-play-mode-text">Enter Manual Play Mode</span>
+                            </button>
+
+                            <div id="manual-controls-legend" class="mt-2 p-1.5 bg-white/70 rounded-xl text-[9px] text-indigo-600 font-semibold space-y-0.5 hidden border border-indigo-100">
+                                <p>🎮 CONTROLS: Use <span class="bg-indigo-100 px-1 rounded font-bold">W A S D</span> or <span class="bg-indigo-100 px-1 rounded font-bold">Arrow Keys</span> to tilt the platform.</p>
+                                <p>Aim to keep the rolling beach ball centered!</p>
+                            </div>
+                        </div>
+
+                        <!-- Guided Missions Gamification -->
+                        <div class="space-y-2">
+                            <h4 class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Guided Lab Assignments:</h4>
+                            
+                            <!-- Mission 1 -->
+                            <div id="mission-1" class="p-2.5 bg-white border-2 border-slate-200 rounded-xl flex items-start gap-2.5 transition-all">
+                                <div class="text-md mt-0.5" id="m1-icon">🟢</div>
+                                <div class="grow">
+                                    <h5 class="text-xs font-bold text-slate-700">Lab 1: Perfect Symmetry</h5>
+                                    <p class="text-[9px] text-slate-500 mt-0.5">Let your AI train to balance a ball for at least <strong>12.0 seconds</strong> using the 'Target Balancing' reward model.</p>
+                                    <span class="inline-block mt-1 text-[8px] font-bold uppercase text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded" id="m1-status">In Progress</span>
+                                </div>
+                            </div>
+
+                            <!-- Mission 2 -->
+                            <div id="mission-2" class="p-2.5 bg-white border-2 border-slate-200 rounded-xl flex items-start gap-2.5 transition-all">
+                                <div class="text-md mt-0.5" id="m2-icon">🔒</div>
+                                <div class="grow">
+                                    <h5 class="text-xs font-bold text-slate-400">Lab 2: Reward Shift</h5>
+                                    <p class="text-[9px] text-slate-400 mt-0.5">Switch the Reward Designer criteria to <strong>Edge Rider</strong> and achieve an evolutionary survival score of <strong>8 seconds</strong>.</p>
+                                    <span class="inline-block mt-1 text-[8px] font-bold uppercase text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded" id="m2-status">Locked</span>
+                                </div>
+                            </div>
+
+                            <!-- Mission 3 -->
+                            <div id="mission-3" class="p-2.5 bg-white border-2 border-slate-200 rounded-xl flex items-start gap-2.5 transition-all">
+                                <div class="text-md mt-0.5" id="m3-icon">🔒</div>
+                                <div class="grow">
+                                    <h5 class="text-xs font-bold text-slate-400">Lab 3: Human vs Machine</h5>
+                                    <p class="text-[9px] text-slate-400 mt-0.5">Activate manual control mode and log a human balancing score of at least <strong>10.0 seconds</strong>!</p>
+                                    <span class="inline-block mt-1 text-[8px] font-bold uppercase text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded" id="m3-status">Locked</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Toggle Sidebar Handle -->
+                <button onclick="toggleSidebar('left-sidebar')" class="absolute -right-10 top-1/2 -translate-y-1/2 w-8 h-16 bg-white/95 border-2 border-sky-100 rounded-r-xl flex flex-col items-center justify-center shadow-md hover:bg-sky-50 pointer-events-auto transition-colors">
+                    <i id="left-sidebar-arrow" class="fa-solid fa-chevron-left text-sky-600 text-xs"></i>
+                </button>
+
+                <!-- Helpful Live Classroom Tips -->
+                <div class="bg-amber-100/70 p-2 rounded-xl border border-amber-200 text-[10px] text-amber-800 leading-normal flex items-start gap-2 shrink-0">
+                    <i class="fa-solid fa-lightbulb text-amber-500 text-xs animate-pulse shrink-0 mt-0.5"></i>
+                    <div>
+                        <span class="font-bold">Pro-Tip:</span>
+                        <span id="classroom-tip">To apply direct sensory wind forces to the ball, tap on its wooden platform directly in the 3D grid sky above!</span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- RIGHT PANEL: HIGH TECH DETAILED BRAIN INSPECTOR & DEBUGGER -->
+            <aside id="inspector-panel" class="friendly-panel w-80 md:w-96 max-w-[90vw] rounded-3xl p-4 flex flex-col justify-between gap-3 pointer-events-auto bg-white/95 relative">
+                
+                <!-- Toggle Sidebar Handle -->
+                <button onclick="toggleSidebar('inspector-panel')" class="absolute -left-10 top-1/2 -translate-y-1/2 w-8 h-16 bg-white/95 border-2 border-sky-100 rounded-l-xl flex flex-col items-center justify-center shadow-md hover:bg-sky-50 pointer-events-auto transition-colors">
+                    <i id="inspector-panel-arrow" class="fa-solid fa-chevron-right text-sky-600 text-xs"></i>
+                </button>
+
+                <div class="flex flex-col gap-2 grow h-full overflow-hidden">
+                    <div class="flex justify-between items-center border-b border-sky-100 pb-1.5">
+                        <h2 class="text-xs font-bold uppercase text-slate-600 flex items-center gap-1.5">
+                            <i class="fa-solid fa-brain text-sky-500 animate-pulse"></i> Neural Inspector
+                        </h2>
+                        <span id="ins-id" class="text-[9px] bg-sky-100 text-sky-700 px-2 py-0.5 rounded-full font-bold">Agent (0)</span>
+                    </div>
+
+                    <!-- Telemetry Dashboard -->
+                    <div class="grid grid-cols-2 gap-2 text-xs shrink-0">
+                        <div class="bg-sky-50/60 border border-sky-100 p-2 rounded-xl">
+                            <span class="text-slate-400 block text-[9px] font-bold uppercase">Learning Status</span>
+                            <span id="ins-state" class="font-extrabold text-emerald-500 flex items-center gap-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+                                Thinking Live
+                            </span>
+                        </div>
+                        <div class="bg-sky-50/60 border border-sky-100 p-2 rounded-xl">
+                            <span class="text-slate-400 block text-[9px] font-bold uppercase">Current Survival</span>
+                            <span id="ins-score" class="font-extrabold text-indigo-600">0.0s</span>
+                        </div>
+                        
+                        <div class="bg-sky-50/60 border border-sky-100 p-2 rounded-xl col-span-2">
+                            <div class="flex justify-between font-bold text-[9px] text-slate-400">
+                                <span>SLIDE OFFSET (DISTANCE TO CENTER)</span>
+                                <span id="ins-distance" class="text-sky-500 font-bold">0.00m</span>
+                            </div>
+                            <div class="w-full bg-slate-200 h-2 rounded-full mt-1.5 overflow-hidden border border-slate-300">
+                                <div id="ins-distance-bar" class="bg-sky-400 h-full transition-all duration-100 rounded-full" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- LIVE INTERACTIVE NEURAL PATHWAYS DEBUGGER -->
+                    <div class="grow flex flex-col overflow-hidden min-h-[140px] relative">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-[9px] uppercase font-bold text-slate-400">Active pathway signals:</span>
+                            
+                            <!-- Interactive Freeze/Play button for Neural Network -->
+                            <button id="btn-freeze-brain" class="btn-playful text-[9px] font-extrabold bg-sky-500 hover:bg-sky-600 text-white px-2 py-0.5 rounded flex items-center gap-1">
+                                <i class="fa-solid fa-pause"></i> <span id="btn-freeze-text">Freeze Brain</span>
+                            </button>
+                        </div>
+
+                        <!-- Neural network dynamic canvas wrapper -->
+                        <div class="bg-slate-900 rounded-2xl grow relative overflow-hidden flex flex-col justify-between p-1.5 shadow-inner">
+                            <canvas id="nn-canvas" class="w-full h-full"></canvas>
+
+                            <!-- Interactive overlay sliders only visible during "Brain Freeze" debugger mode -->
+                            <div id="brain-freeze-controls" class="absolute inset-0 bg-slate-950/90 backdrop-blur-sm p-3 flex flex-col justify-between rounded-2xl hidden text-white">
+                                <div class="flex justify-between items-center border-b border-white/15 pb-1">
+                                    <h4 class="text-[10px] font-bold text-sky-400 uppercase tracking-wider"><i class="fa-solid fa-bug"></i> Live Brain Debugger Tool</h4>
+                                    <button onclick="toggleFreezeBrain(false)" class="text-slate-400 hover:text-white text-xs"><i class="fa-solid fa-circle-xmark"></i></button>
+                                </div>
+                                <p class="text-[9px] text-slate-400 leading-normal">
+                                    The brain is frozen! Manually drag observations below to see how weights propagate to compute muscle tilts:
+                                </p>
+                                
+                                <div class="space-y-1.5">
+                                    <!-- Observation Mock Slider 1 -->
+                                    <div class="text-[9px] space-y-0.5">
+                                        <div class="flex justify-between">
+                                            <span class="text-slate-300 font-semibold">Simulated Ball Offset X (Left / Right)</span>
+                                            <span id="slider-mock-ballx-lbl" class="text-sky-400 font-bold">0.00</span>
+                                        </div>
+                                        <input id="slider-mock-ballx" type="range" min="-100" max="100" value="35" class="w-full h-1 bg-white/20 rounded accent-sky-400">
+                                    </div>
+                                    
+                                    <!-- Observation Mock Slider 2 -->
+                                    <div class="text-[9px] space-y-0.5">
+                                        <div class="flex justify-between">
+                                            <span class="text-slate-300 font-semibold">Simulated Ball Velocity X (Rolling Speed)</span>
+                                            <span id="slider-mock-velx-lbl" class="text-sky-400 font-bold">0.00</span>
+                                        </div>
+                                        <input id="slider-mock-velx" type="range" min="-100" max="100" value="-20" class="w-full h-1 bg-white/20 rounded accent-sky-400">
+                                    </div>
+                                </div>
+
+                                <div class="p-1.5 bg-white/5 rounded-xl flex justify-between items-center text-[10px]">
+                                    <div class="text-left">
+                                        <span class="text-slate-400 block text-[8px] uppercase">Computed Output (Tilt force)</span>
+                                        <span id="mock-output-val" class="font-bold text-amber-400">X-Tilt: 0.00 | Z-Tilt: 0.00</span>
+                                    </div>
+                                    <i class="fa-solid fa-bolt text-amber-400 animate-pulse text-xs"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Informative Interactive Legends -->
+                <div class="border-t border-sky-100 pt-2 text-[9px] text-slate-400 space-y-0.5">
+                    <div class="flex justify-between font-bold">
+                        <span class="text-sky-500">Left: Inputs (Observations)</span>
+                        <span class="text-indigo-500">Right: Outputs (Tilt Action Forces)</span>
+                    </div>
+                    <p class="leading-normal">
+                        Line thickness represents connection magnitude. <span class="text-sky-500 font-bold">Blue pathways</span> excite actions; <span class="text-rose-500 font-bold">Red pathways</span> suppress/inhibit actions!
+                    </p>
+                </div>
+            </aside>
+        </div>
+
+        <!-- BOTTOM HUD: CHRONOLOGY PROGRESS GRAPH -->
+        <footer class="pointer-events-auto w-full flex justify-center">
+            <div class="friendly-panel w-full max-w-4xl p-2.5 sm:p-3 rounded-2xl flex flex-col md:flex-row gap-4 items-center bg-white/95">
+                <!-- Legend explanation block -->
+                <div class="w-full md:w-1/3 flex flex-col justify-center text-center md:text-left leading-normal">
+                    <span class="text-[11px] uppercase font-bold text-indigo-600 tracking-wide flex items-center gap-1.5 justify-center md:justify-start">
+                        <i class="fa-solid fa-chart-line"></i> Evolutionary Journey Map (Live)
+                    </span>
+                    <p class="text-[10px] text-slate-500 mt-0.5">
+                        Watch learning progress! The <span class="text-amber-500 font-bold">Gold Line</span> tracks peak balancing survivor times. As generations proceed, this curve trends upwards!
+                    </p>
+                </div>
+                <!-- Real-time Chart.js container -->
+                <div class="w-full md:w-2/3 h-14 relative">
+                    <canvas id="history-chart"></canvas>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- BACKGROUND CANVAS FOR 3D WORLD -->
+    <div id="threejs-container" class="absolute inset-0 w-full h-full z-0 bg-[#e0f2fe]"></div>
+
+    <!-- CUSTOM ALERT DIALOG MODAL -->
+    <div id="custom-modal" class="hidden absolute inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="friendly-panel max-w-sm w-full bg-white p-5 rounded-3xl text-center space-y-3.5 shadow-2xl pointer-events-auto">
+            <div id="modal-icon" class="text-4xl animate-bounce">🎉</div>
+            <h3 id="modal-title" class="text-md font-bold text-slate-800">Mission Accomplished!</h3>
+            <p id="modal-desc" class="text-xs text-slate-500 leading-normal">You successfully helped your pupils complete the challenge.</p>
+            <button onclick="closeModal()" class="btn-playful w-full py-2 bg-sky-500 hover:bg-sky-600 text-white rounded-xl font-bold text-xs transition-colors">
+                Awesome! Continue Learning 🚀
+            </button>
+        </div>
+    </div>
+
+    <!-- UTILITIES AND ES-MODULE MAPPING -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
+                "cannon-es": "https://unpkg.com/cannon-es@0.20.0/dist/cannon-es.js"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import * as CANNON from 'cannon-es';
+
+        // --- GLOBAL CONFIGURATION AND VARIABLES ---
+        const AGENT_COUNT = 12;
+        const PLATFORM_SIZE = 4.2;
+        const BALL_RADIUS = 0.35;
+        
+        let simSpeed = 1;
+        let mutationRate = 0.15;
+        let windIntensity = 0.4;
+        let generation = 1;
+        let bestScore = 0;
+        let humanBestScore = 0;
+        let currentFollowAgentId = 0;
+        let inspectorTargetAgent = null;
+
+        // Custom reward strategy tracker
+        let rewardType = 'balance'; // options: 'balance', 'edge', 'speed'
+
+        // Human play state tracker
+        let humanPlayMode = false;
+        let humanTiltX = 0;
+        let humanTiltZ = 0;
+        let humanKeys = { w: false, a: false, s: false, d: false, ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false };
+
+        // Labs and missions completion markers
+        let mission1Completed = false;
+        let mission2Completed = false;
+        let mission3Completed = false;
+
+        // Active freeze debugger parameters
+        let isBrainFrozen = false;
+        let mockInputs = {
+            ballX: 0.35,
+            velX: -0.20
+        };
+
+        // --- INTERACTIVE LECTURE AND CURRICULUM DATA ---
+        const curriculumSlides = [
+            {
+                title: "1. The RL Loop (How Robots Learn)",
+                desc: "Welcome! <b>Reinforcement Learning (RL)</b> is a trial-and-error training method. An <b>Agent</b> looks at the <b>State</b> of its environment, decides on an <b>Action</b>, and receives a positive or negative <b>Reward</b> (like giving treats to a puppy!).",
+                tip: "See the loop in action: Every tilt represents an Action chosen based on the Ball's position!"
+            },
+            {
+                title: "2. Observations / State (The Sensory Input)",
+                desc: "Our neural platform has 'sensors' to measure observations. It continuously tracks <b>8 inputs</b>: platform tilt, ball relative coordinates (X, Y, Z), and the rolling velocities. This is what feeds the brain!",
+                tip: "Try clicking 'Freeze Brain' in the inspector panel to mock custom states and see computed tilt outputs!"
+            },
+            {
+                title: "3. Action & Policy (The Decision Making)",
+                desc: "The Agent's brain is a neural network policy. It receives observations, runs mathematical operations on connections called <b>weights</b>, and outputs tilt angles. Watch the synapses light up as thinking happens!",
+                tip: "Go to the 'Missions' tab and turn on 'Manual Play Mode' to test tilting the platform yourself using your keyboard!"
+            },
+            {
+                title: "4. Reward Engineering (Designing Motivation)",
+                desc: "Rewards motivate the agent. If you reward center proximity, they balance perfectly. If you reward speed or edges, they adopt completely different strategies. This is called <b>Reward Engineering</b>!",
+                tip: "Open the 'Engine Sandbox' tab and switch the Reward Strategy to see the agents' behaviors change instantly!"
+            },
+            {
+                title: "5. Evolution via Genetic Algorithm",
+                desc: "When a generation collapses, the smartest survivors are selected. We duplicate their neural weights, cross them over (breeding), and introduce random changes (<b>mutations</b>) to discover superior models!",
+                tip: "Increase the Synaptic Mutation Rate to force wilder exploration, or decrease it for careful fine-tuning!"
+            }
+        ];
+        let currentLessonIndex = 0;
+
+        // --- PLAYFUL POP QUIZ ARCHITECTURE ---
+        const quizChallenges = [
+            {
+                q: "What component acts as the 'Treat' that rewards learning in RL?",
+                options: ["Observation", "Action Value", "Reward Signal", "Genetic Mutation"],
+                correct: 2,
+                hint: "It defines the goal of our Agent. Keep the ball centered for more of this!"
+            },
+            {
+                q: "What does the Agent use to perceive its environment?",
+                options: ["Actuators", "Observations/States", "Synaptic Weights", "Crossover Genes"],
+                correct: 1,
+                hint: "Think of these as the biological eyes or digital sensors of the platform."
+            },
+            {
+                q: "If you change the Reward Function, what happens to the AI's behavior?",
+                options: ["Nothing", "It breaks completely", "It adapts to maximize the new criteria", "It evolves in reverse"],
+                correct: 2,
+                hint: "Rewards motivate! Changing the treat formula changes what the agent works to achieve."
+            }
+        ];
+        let activeQuizIndex = 0;
+
+        // --- EVOLUTIONARY BRAIN MODEL CLASS ---
+        class Brain {
+            constructor(weights = null) {
+                this.inputSize = 8;  
+                this.hiddenSize = 10; 
+                this.outputSize = 2; 
+
+                this.inputsCache = new Float32Array(this.inputSize);
+                this.hiddenCache = new Float32Array(this.hiddenSize);
+                this.outputsCache = new Float32Array(this.outputSize);
+
+                if (weights) {
+                    this.weights = weights;
+                } else {
+                    // Xavier Normal Initialization for efficient neural signal propagation
+                    this.weights = new Float32Array((this.inputSize * this.hiddenSize) + (this.hiddenSize * this.outputSize));
+                    const numInputToHidden = this.inputSize * this.hiddenSize;
+                    const scale1 = Math.sqrt(2.0 / this.inputSize);
+                    for (let i = 0; i < numInputToHidden; i++) {
+                        this.weights[i] = (Math.random() * 2 - 1) * scale1;
+                    }
+                    const scale2 = Math.sqrt(2.0 / this.hiddenSize);
+                    for (let i = numInputToHidden; i < this.weights.length; i++) {
+                        this.weights[i] = (Math.random() * 2 - 1) * scale2;
+                    }
+                }
+            }
+
+            predict(inputs) {
+                this.inputsCache.set(inputs);
+
+                // Input Layer -> Hidden Layer activation via hyperbolic tangent
+                for (let i = 0; i < this.hiddenSize; i++) {
+                    let sum = 0;
+                    for (let j = 0; j < this.inputSize; j++) {
+                        sum += inputs[j] * this.weights[i * this.inputSize + j];
+                    }
+                    this.hiddenCache[i] = Math.tanh(sum); 
+                }
+                
+                // Hidden Layer -> Output Layer (X axis tilt, Z axis tilt)
+                let outputs = new Float32Array(this.outputSize);
+                let offset = this.inputSize * this.hiddenSize;
+                for (let i = 0; i < this.outputSize; i++) {
+                    let sum = 0;
+                    for (let j = 0; j < this.hiddenSize; j++) {
+                        sum += this.hiddenCache[j] * this.weights[offset + (i * this.hiddenSize + j)];
+                    }
+                    outputs[i] = Math.tanh(sum); 
+                }
+
+                this.outputsCache.set(outputs);
+                return outputs;
+            }
+
+            mutate(rate = 0.15) {
+                let newWeights = new Float32Array(this.weights);
+                for (let i = 0; i < newWeights.length; i++) {
+                    if (Math.random() < rate) {
+                        // Apply targeted adjustments
+                        newWeights[i] += (Math.random() * 2 - 1) * 0.4;
+                        newWeights[i] = Math.max(-2, Math.min(2, newWeights[i]));
+                    }
+                }
+                return new Brain(newWeights);
+            }
+
+            crossover(partnerBrain) {
+                const childWeights = new Float32Array(this.weights.length);
+                for (let i = 0; i < this.weights.length; i++) {
+                    childWeights[i] = Math.random() < 0.5 ? this.weights[i] : partnerBrain.weights[i];
+                }
+                return new Brain(childWeights);
+            }
+        }
+
+        // --- PLATFORM AGENT CLASS CONSTRUCTOR ---
+        class Agent {
+            constructor(id, x, z, world, scene, brain = null) {
+                this.id = id;
+                this.brain = brain || new Brain();
+                this.reward = 0;
+                this.survivalTime = 0;
+                this.alive = true;
+                this.pos = { x, z };
+                this.isChampion = false;
+                
+                this.lastTiltX = 0;
+                this.lastTiltZ = 0;
+
+                // Cannon-es kinematic platforms (not affected by gravity but tilt manually)
+                this.platBody = new CANNON.Body({
+                    mass: 0,
+                    type: CANNON.Body.KINEMATIC,
+                    position: new CANNON.Vec3(x, 2, z),
+                    shape: new CANNON.Box(new CANNON.Vec3(PLATFORM_SIZE / 2, 0.12, PLATFORM_SIZE / 2))
+                });
+                
+                // Cannon-es dynamic ball (acts under gravity and moves)
+                this.ballBody = new CANNON.Body({
+                    mass: 1.2,
+                    position: new CANNON.Vec3(x, 3.8, z),
+                    shape: new CANNON.Sphere(BALL_RADIUS),
+                    linearDamping: 0.12,
+                    angularDamping: 0.15
+                });
+
+                world.addBody(this.platBody);
+                world.addBody(this.ballBody);
+
+                // Create cute aesthetic platform meshes
+                const platGeo = new THREE.BoxGeometry(PLATFORM_SIZE, 0.25, PLATFORM_SIZE);
+                const platMat = new THREE.MeshPhongMaterial({ 
+                    color: 0xfed7aa, 
+                    shininess: 25,
+                    specular: 0x1e293b
+                });
+                this.platMesh = new THREE.Mesh(platGeo, platMat);
+                
+                const edgeGeo = new THREE.EdgesGeometry(platGeo);
+                const edgeMat = new THREE.LineBasicMaterial({ color: 0x38bdf8, linewidth: 2, transparent: true, opacity: 0.65 });
+                this.platEdge = new THREE.LineSegments(edgeGeo, edgeMat);
+                this.platMesh.add(this.platEdge);
+
+                // CUTE CARTOON BALL UPGRADE WITH PHYSICAL ROLLING EYES
+                this.ballGroup = new THREE.Group();
+                
+                const ballGeo = new THREE.SphereGeometry(BALL_RADIUS, 32, 32);
+                const ballMat = new THREE.MeshStandardMaterial({ 
+                    color: 0xf43f5e, 
+                    roughness: 0.25, 
+                    metalness: 0.05 
+                });
+                this.ballCoreMesh = new THREE.Mesh(ballGeo, ballMat);
+                this.ballGroup.add(this.ballCoreMesh);
+
+                // Add 3D white eyes and black pupils on the front of the rolling ball!
+                const eyeGeo = new THREE.SphereGeometry(0.08, 16, 16);
+                const eyeMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+                const pupilMat = new THREE.MeshBasicMaterial({ color: 0x1e293b });
+
+                const leftEye = new THREE.Mesh(eyeGeo, eyeMat);
+                leftEye.position.set(0.12, 0.15, BALL_RADIUS - 0.05);
+                const leftPupil = new THREE.Mesh(new THREE.SphereGeometry(0.045, 8, 8), pupilMat);
+                leftPupil.position.set(0.13, 0.15, BALL_RADIUS - 0.02);
+                this.ballGroup.add(leftEye);
+                this.ballGroup.add(leftPupil);
+
+                const rightEye = new THREE.Mesh(eyeGeo, eyeMat);
+                rightEye.position.set(-0.12, 0.15, BALL_RADIUS - 0.05);
+                const rightPupil = new THREE.Mesh(new THREE.SphereGeometry(0.045, 8, 8), pupilMat);
+                rightPupil.position.set(-0.13, 0.15, BALL_RADIUS - 0.02);
+                this.ballGroup.add(rightEye);
+                this.ballGroup.add(rightPupil);
+
+                scene.add(this.platMesh);
+                scene.add(this.ballGroup);
+
+                this.platMesh.castShadow = true;
+                this.platMesh.receiveShadow = true;
+                this.ballCoreMesh.castShadow = true;
+                this.ballCoreMesh.receiveShadow = true;
+            }
+
+            update() {
+                if (!this.alive) return;
+
+                // 1. Compute observation vector (where is the ball? where is it rolling?)
+                const relativeBallX = this.ballBody.position.x - this.platBody.position.x;
+                const relativeBallY = this.ballBody.position.y - this.platBody.position.y;
+                const relativeBallZ = this.ballBody.position.z - this.platBody.position.z;
+
+                const obs = [
+                    this.lastTiltX,
+                    this.lastTiltZ,
+                    relativeBallX / (PLATFORM_SIZE / 2),
+                    relativeBallY / 2.0,
+                    relativeBallZ / (PLATFORM_SIZE / 2),
+                    this.ballBody.velocity.x / 4.0,
+                    this.ballBody.velocity.y / 4.0,
+                    this.ballBody.velocity.z / 4.0
+                ];
+
+                // 2. Select actions (check manual play mode override first)
+                let tiltX, tiltZ;
+                if (humanPlayMode && this.id === currentFollowAgentId) {
+                    tiltX = humanTiltX;
+                    tiltZ = humanTiltZ;
+                    
+                    // Smoothly decay keys decay
+                    humanTiltX *= 0.9;
+                    humanTiltZ *= 0.9;
+                } else {
+                    // Neural computation path
+                    const prediction = this.brain.predict(obs);
+                    tiltX = prediction[0];
+                    tiltZ = prediction[1];
+                }
+
+                this.lastTiltX = tiltX;
+                this.lastTiltZ = tiltZ;
+
+                // Apply rotational angles
+                const targetQuat = new CANNON.Quaternion();
+                targetQuat.setFromEuler(tiltX * 0.38, 0, tiltZ * 0.38); 
+                this.platBody.quaternion.copy(targetQuat);
+
+                // Sync visible 3D rendering elements
+                this.platMesh.position.copy(this.platBody.position);
+                this.platMesh.quaternion.copy(this.platBody.quaternion);
+                this.ballGroup.position.copy(this.ballBody.position);
+                this.ballGroup.quaternion.copy(this.ballBody.quaternion);
+
+                // 3. REWARD STRATEGY ENGINEERING ENGINE
+                const distance = Math.sqrt(relativeBallX * relativeBallX + relativeBallZ * relativeBallZ);
+                const normDist = Math.min(distance / (PLATFORM_SIZE / 2), 1.0);
+                
+                let stepReward = 0;
+                if (rewardType === 'balance') {
+                    // High scores closer to center
+                    stepReward = 0.02 + (1.0 - normDist) * 0.08;
+                } else if (rewardType === 'edge') {
+                    // Reverse motivation: balance further away from the center!
+                    stepReward = 0.02 + normDist * 0.12;
+                } else if (rewardType === 'speed') {
+                    // High speeds balance bonus
+                    const speed = Math.sqrt(this.ballBody.velocity.x**2 + this.ballBody.velocity.z**2);
+                    stepReward = 0.01 + speed * 0.06 + (1.0 - normDist) * 0.02;
+                }
+                
+                this.reward += stepReward;
+                this.survivalTime += 1.0 / 60.0;
+
+                // Colorize mesh surfaces based on Agent state
+                if (this.isChampion) {
+                    this.platMesh.material.color.setHex(0xfef08a); // bright yellow champion plate
+                    this.platEdge.material.color.setHex(0xeab308); 
+                    this.platEdge.material.opacity = 1.0;
+                    this.ballCoreMesh.material.color.setHex(0xf43f5e);
+                } else {
+                    this.platMesh.material.color.setHex(0xfed7aa); 
+                    this.platEdge.material.color.setHex(0x38bdf8); 
+                    this.platEdge.material.opacity = 0.55;
+                    this.ballCoreMesh.material.color.setHex(0x0284c7); 
+                }
+
+                // 4. Fail parameters (fell off side threshold)
+                const failDistanceThreshold = PLATFORM_SIZE / 1.7;
+                if (this.ballBody.position.y < 1.1 || distance > failDistanceThreshold) {
+                    this.die();
+                }
+            }
+
+            applyDisruptionForce(forceX, forceZ) {
+                if (!this.alive) return;
+                this.ballBody.applyImpulse(new CANNON.Vec3(forceX, 0, forceZ), new CANNON.Vec3(0, 0, 0));
+            }
+
+            die() {
+                this.alive = false;
+                this.platMesh.visible = false;
+                this.ballGroup.visible = false;
+                // Safely clear velocities and push bodies out of active sight
+                this.ballBody.position.set(this.pos.x, -250, this.pos.z);
+                this.ballBody.velocity.set(0, 0, 0);
+                this.ballBody.angularVelocity.set(0, 0, 0);
+            }
+
+            reset(brain, useSharedGenOffset = true) {
+                this.brain = brain;
+                this.alive = true;
+                this.reward = 0;
+                this.survivalTime = 0;
+                this.isChampion = false;
+                this.platMesh.visible = true;
+                this.ballGroup.visible = true;
+                
+                this.lastTiltX = 0;
+                this.lastTiltZ = 0;
+
+                this.platBody.quaternion.set(0, 0, 0, 1);
+                this.platBody.velocity.set(0, 0, 0);
+                this.platBody.angularVelocity.set(0, 0, 0);
+
+                this.ballBody.velocity.set(0, 0, 0);
+                this.ballBody.angularVelocity.set(0, 0, 0);
+                this.ballBody.force.set(0, 0, 0);
+                this.ballBody.torque.set(0, 0, 0);
+                
+                // Add minor random starting offset positions to ensure robust training
+                const rx = (Math.random() - 0.5) * 1.2;
+                const rz = (Math.random() - 0.5) * 1.2;
+                this.ballBody.position.set(this.pos.x + rx, 3.8, this.pos.z + rz);
+            }
+        }
+
+        // --- 3D ENVIRONMENT BUILDERS ---
+        const container = document.getElementById('threejs-container');
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0xf0f9ff); 
+        scene.fog = new THREE.FogExp2(0xf0f9ff, 0.015);
+
+        const camera = new THREE.PerspectiveCamera(42, container.clientWidth / container.clientHeight, 0.1, 1000);
+        camera.position.set(0, 16, 26);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        container.appendChild(renderer.domElement);
+
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.maxPolarAngle = Math.PI / 2.15; 
+        controls.minDistance = 5;
+        controls.maxDistance = 85;
+
+        // Bright friendly stylized sky lighting
+        const ambient = new THREE.AmbientLight(0xffffff, 0.65);
+        scene.add(ambient);
+
+        const sunLight = new THREE.DirectionalLight(0xfffbeb, 0.85); 
+        sunLight.position.set(15, 30, 20);
+        sunLight.castShadow = true;
+        sunLight.shadow.mapSize.width = 1024;
+        sunLight.shadow.mapSize.height = 1024;
+        sunLight.shadow.bias = -0.0003;
+        scene.add(sunLight);
+
+        const groundGrid = new THREE.GridHelper(120, 40, 0xbae6fd, 0xe0f2fe);
+        groundGrid.position.y = 0.01;
+        scene.add(groundGrid);
+
+        // Physics World creation using cannon-es
+        const world = new CANNON.World();
+        world.gravity.set(0, -16.0, 0); 
+
+        const platformMaterial = new CANNON.Material('platformMat');
+        const sphereMaterial = new CANNON.Material('sphereMat');
+        const contactMat = new CANNON.ContactMaterial(platformMaterial, sphereMaterial, {
+            friction: 0.35, 
+            restitution: 0.08 
+        });
+        world.addContactMaterial(contactMat);
+
+        // Build grid distribution of agents
+        let agents = [];
+        const gridSpacing = 9.5;
+        const columns = 4;
+
+        for (let i = 0; i < AGENT_COUNT; i++) {
+            const col = i % columns;
+            const row = Math.floor(i / columns);
+            const x = (col - (columns - 1) / 2) * gridSpacing;
+            const z = (row - 1) * gridSpacing;
+            
+            const agent = new Agent(i, x, z, world, scene);
+            agent.platBody.material = platformMaterial;
+            agent.ballBody.material = sphereMaterial;
+            agents.push(agent);
+        }
+
+        let bestAgent = agents[0];
+        inspectorTargetAgent = agents[0];
+
+        // Raycasting for mouse platform clicks and manual wind pushes
+        const raycaster = new THREE.Raycaster();
+        const mouseVec = new THREE.Vector2();
+
+        window.addEventListener('click', (event) => {
+            if (event.target.tagName !== 'CANVAS' && event.target.id !== 'threejs-container') return;
+
+            mouseVec.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouseVec.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+            raycaster.setFromCamera(mouseVec, camera);
+            const clickHits = raycaster.intersectObjects(agents.map(a => a.platMesh), true);
+
+            if (clickHits.length > 0) {
+                const matchedMesh = clickHits[0].object;
+                const matchAgent = agents.find(a => a.platMesh === matchedMesh || a.platMesh === matchedMesh.parent);
+                
+                if (matchAgent) {
+                    inspectorTargetAgent = matchAgent;
+                    currentFollowAgentId = matchAgent.id;
+                    // Apply minor wind gust
+                    matchAgent.applyDisruptionForce((Math.random() - 0.5) * 6 * windIntensity, (Math.random() - 0.5) * 6 * windIntensity);
+                }
+            }
+        });
+
+        // --- REAL-TIME GRAPH (CHART.JS) SETUP ---
+        const historyCtx = document.getElementById('history-chart').getContext('2d');
+        const historyLabels = [];
+        const scoreDataset = [];
+        const avgDataset = [];
+
+        const progressChart = new Chart(historyCtx, {
+            type: 'line',
+            data: {
+                labels: historyLabels,
+                datasets: [
+                    {
+                        label: 'Max Balance Score (s)',
+                        data: scoreDataset,
+                        borderColor: '#f59e0b',
+                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                        borderWidth: 2.5,
+                        pointRadius: 2.5,
+                        tension: 0.3,
+                        fill: true
+                    },
+                    {
+                        label: 'Average Score (s)',
+                        data: avgDataset,
+                        borderColor: '#06b6d4',
+                        borderWidth: 1.5,
+                        pointRadius: 0,
+                        tension: 0.25,
+                        fill: false
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        labels: {
+                            color: '#64748b',
+                            font: { size: 9, family: 'Quicksand' },
+                            boxWidth: 8
+                        }
+                    }
+                },
+                scales: {
+                    x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 8 } } },
+                    y: { grid: { color: '#f1f5f9' }, ticks: { color: '#94a3b8', font: { size: 8 } } }
+                }
+            }
+        });
+
+        // --- HIGH TECH NEURAL NETWORK VISUALIZER CANVAS ---
+        const nnCanvas = document.getElementById('nn-canvas');
+        const nnCtx = nnCanvas.getContext('2d');
+
+        function resizeNeuralCanvas() {
+            const containerBox = nnCanvas.parentElement.getBoundingClientRect();
+            nnCanvas.width = containerBox.width * window.devicePixelRatio;
+            nnCanvas.height = containerBox.height * window.devicePixelRatio;
+            nnCanvas.style.width = '100%';
+            nnCanvas.style.height = '100%';
+            nnCtx.scale(window.devicePixelRatio, window.devicePixelRatio);
+        }
+        window.addEventListener('resize', resizeNeuralCanvas);
+        resizeNeuralCanvas();
+
+        function drawNeuralNetwork(agent) {
+            if (!agent) return;
+
+            const w = nnCanvas.width / window.devicePixelRatio;
+            const h = nnCanvas.height / window.devicePixelRatio;
+            nnCtx.clearRect(0, 0, w, h);
+
+            let brain = agent.brain;
+            const layers = [brain.inputSize, brain.hiddenSize, brain.outputSize];
+            const colX = [w * 0.15, w * 0.5, w * 0.85];
+            const nodeY = [];
+
+            const inputLabels = ["Pitch", "Roll", "Ball X", "Ball Y", "Ball Z", "Vel X", "Vel Y", "Vel Z"];
+            const outputLabels = ["Tilt X", "Tilt Z"];
+
+            for (let l = 0; l < layers.length; l++) {
+                const ySpace = h / (layers[l] + 1);
+                const positions = [];
+                for (let i = 0; i < layers[l]; i++) {
+                    positions.push(ySpace * (i + 1));
+                }
+                nodeY.push(positions);
+            }
+
+            const pulsePeriod = (Date.now() % 1600) / 1600;
+
+            // Render Input -> Hidden Connections
+            let wIdx = 0;
+            for (let i = 0; i < brain.inputSize; i++) {
+                for (let j = 0; j < brain.hiddenSize; j++) {
+                    const weight = brain.weights[wIdx++];
+                    const opacity = Math.min(Math.abs(weight) * 0.7, 0.85);
+                    const color = weight > 0 ? `rgba(14, 165, 233, ${opacity})` : `rgba(244, 63, 94, ${opacity})`;
+
+                    nnCtx.beginPath();
+                    nnCtx.moveTo(colX[0], nodeY[0][i]);
+                    nnCtx.lineTo(colX[1], nodeY[1][j]);
+                    nnCtx.lineWidth = Math.abs(weight) * 2;
+                    nnCtx.strokeStyle = color;
+                    nnCtx.stroke();
+
+                    // Signal animation packets
+                    if (agent.alive && !isBrainFrozen) {
+                        const t = (pulsePeriod + (i * 0.15)) % 1.0;
+                        const px = colX[0] + (colX[1] - colX[0]) * t;
+                        const py = nodeY[0][i] + (nodeY[1][j] - nodeY[0][i]) * t;
+                        nnCtx.beginPath();
+                        nnCtx.arc(px, py, 1.8, 0, Math.PI * 2);
+                        nnCtx.fillStyle = weight > 0 ? '#0ea5e9' : '#f43f5e';
+                        nnCtx.fill();
+                    }
+                }
+            }
+
+            // Hidden -> Output Connections
+            for (let i = 0; i < brain.hiddenSize; i++) {
+                for (let j = 0; j < brain.outputSize; j++) {
+                    const weight = brain.weights[wIdx++];
+                    const opacity = Math.min(Math.abs(weight) * 0.7, 0.85);
+                    const color = weight > 0 ? `rgba(14, 165, 233, ${opacity})` : `rgba(244, 63, 94, ${opacity})`;
+
+                    nnCtx.beginPath();
+                    nnCtx.moveTo(colX[1], nodeY[1][i]);
+                    nnCtx.lineTo(colX[2], nodeY[2][j]);
+                    nnCtx.lineWidth = Math.abs(weight) * 2.5;
+                    nnCtx.strokeStyle = color;
+                    nnCtx.stroke();
+                }
+            }
+
+            // Draw Node nodes with labels
+            for (let i = 0; i < brain.inputSize; i++) {
+                let actVal = brain.inputsCache[i];
+                const r = 5;
+                nnCtx.beginPath();
+                nnCtx.arc(colX[0], nodeY[0][i], r, 0, Math.PI * 2);
+                nnCtx.fillStyle = actVal > 0 ? '#38bdf8' : (actVal < 0 ? '#f43f5e' : '#64748b');
+                nnCtx.fill();
+
+                // Live sensory input text
+                nnCtx.fillStyle = '#94a3b8';
+                nnCtx.font = '700 8px Quicksand';
+                nnCtx.textAlign = 'right';
+                nnCtx.fillText(`${inputLabels[i]} (${actVal.toFixed(1)})`, colX[0] - 8, nodeY[0][i] + 3);
+            }
+
+            for (let i = 0; i < brain.hiddenSize; i++) {
+                let actVal = brain.hiddenCache[i];
+                nnCtx.beginPath();
+                nnCtx.arc(colX[1], nodeY[1][i], 4, 0, Math.PI * 2);
+                nnCtx.fillStyle = actVal > 0 ? '#818cf8' : '#cbd5e1';
+                nnCtx.fill();
+            }
+
+            for (let i = 0; i < brain.outputSize; i++) {
+                let actVal = brain.outputsCache[i];
+                nnCtx.beginPath();
+                nnCtx.arc(colX[2], nodeY[2][i], 6.5, 0, Math.PI * 2);
+                nnCtx.fillStyle = actVal > 0 ? '#fbbf24' : '#ec4899';
+                nnCtx.fill();
+
+                nnCtx.fillStyle = '#e2e8f0';
+                nnCtx.font = '700 8px Quicksand';
+                nnCtx.textAlign = 'left';
+                nnCtx.fillText(`${outputLabels[i]} (${actVal.toFixed(2)})`, colX[2] + 10, nodeY[2][i] + 3);
+            }
+        }
+
+        // --- BRAIN FREEZE DEBUGGER INTERACTION ---
+        window.toggleFreezeBrain = function(freeze) {
+            isBrainFrozen = freeze;
+            const dbgOverlay = document.getElementById('brain-freeze-controls');
+            const freezeText = document.getElementById('btn-freeze-text');
+            const freezeBtn = document.getElementById('btn-freeze-brain');
+
+            if (isBrainFrozen) {
+                dbgOverlay.classList.remove('hidden');
+                freezeText.innerText = "Resume Think";
+                freezeBtn.className = "btn-playful text-[9px] font-extrabold bg-emerald-500 hover:bg-emerald-600 text-white px-2 py-0.5 rounded flex items-center gap-1 animate-pulse";
+                computeMockDebuggerSignals();
+            } else {
+                dbgOverlay.classList.add('hidden');
+                freezeText.innerText = "Freeze Brain";
+                freezeBtn.className = "btn-playful text-[9px] font-extrabold bg-sky-500 hover:bg-sky-600 text-white px-2 py-0.5 rounded flex items-center gap-1";
+            }
+        }
+
+        document.getElementById('btn-freeze-brain').addEventListener('click', () => {
+            toggleFreezeBrain(!isBrainFrozen);
+        });
+
+        function computeMockDebuggerSignals() {
+            if (!inspectorTargetAgent || !isBrainFrozen) return;
+
+            const valX = parseFloat(document.getElementById('slider-mock-ballx').value) / 100;
+            const velX = parseFloat(document.getElementById('slider-mock-velx').value) / 100;
+
+            document.getElementById('slider-mock-ballx-lbl').innerText = valX.toFixed(2);
+            document.getElementById('slider-mock-velx-lbl').innerText = velX.toFixed(2);
+
+            // Construct mock inputs sequence
+            const fakeInputs = [
+                0, 0,      // platform pitch/roll
+                valX, 1.0, 0, // Mocked relative positions (Y, Z)
+                velX, 0, 0  // Mocked ball velocities
+            ];
+
+            // Trigger prediction computations
+            const [outX, outZ] = inspectorTargetAgent.brain.predict(fakeInputs);
+            document.getElementById('mock-output-val').innerText = `Tilt-X: ${outX.toFixed(2)} | Tilt-Z: ${outZ.toFixed(2)}`;
+            
+            drawNeuralNetwork(inspectorTargetAgent);
+        }
+
+        document.getElementById('slider-mock-ballx').addEventListener('input', computeMockDebuggerSignals);
+        document.getElementById('slider-mock-velx').addEventListener('input', computeMockDebuggerSignals);
+
+        // --- NATURAL SELECTION & GENETIC SELECTION PROCESS ---
+        function evolve() {
+            // Sort populations based on reward score
+            agents.sort((a, b) => b.reward - a.reward);
+            
+            const bestPerformer = agents[0];
+            const runnerUpPerformer = agents[1];
+
+            const roundBestSeconds = bestPerformer.survivalTime;
+            const avgSeconds = agents.reduce((acc, curr) => acc + curr.survivalTime, 0) / AGENT_COUNT;
+
+            // Save metrics to graphs
+            scoreDataset.push(Math.round(roundBestSeconds * 10) / 10);
+            avgDataset.push(Math.round(avgSeconds * 10) / 10);
+            historyLabels.push(`G${generation}`);
+
+            if (scoreDataset.length > 20) {
+                scoreDataset.shift();
+                avgDataset.shift();
+                historyLabels.shift();
+            }
+            progressChart.update();
+
+            // Track peaks
+            if (roundBestSeconds > bestScore) {
+                bestScore = roundBestSeconds;
+                document.getElementById('best').innerText = `${bestScore.toFixed(1)}s`;
+            }
+
+            // --- PROGRESSIVE LAB ASSIGNMENTS & MISSIONS STATS ---
+            // Mission 1 validation
+            if (!mission1Completed && bestScore >= 12.0 && rewardType === 'balance') {
+                mission1Completed = true;
+                document.getElementById('m1-icon').innerText = '🎉';
+                document.getElementById('m1-status').innerText = 'Completed!';
+                document.getElementById('m1-status').className = 'inline-block mt-1 text-[8px] font-bold uppercase text-emerald-600 bg-emerald-100 px-1.5 py-0.5 rounded';
+                document.getElementById('mission-1').className = 'p-2.5 bg-emerald-50 border-2 border-emerald-200 rounded-xl flex items-start gap-2.5 transition-all';
+                
+                // Unlock Mission 2
+                document.getElementById('m2-icon').innerText = '🟢';
+                document.getElementById('m2-status').innerText = 'In Progress';
+                document.getElementById('m2-status').className = 'inline-block mt-1 text-[8px] font-bold uppercase text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded';
+                document.getElementById('mission-2').className = 'p-2.5 bg-white border-2 border-slate-200 rounded-xl flex items-start gap-2.5 transition-all';
+                
+                showModal('🏆', 'Perfect Symmetry Complete!', 'Your AI agents learned how to balance for 12 straight seconds using standard targets! You cleared Lab assignment 1.');
+            }
+
+            // Mission 2 validation
+            if (mission1Completed && !mission2Completed && rewardType === 'edge' && bestScore >= 8.0) {
+                mission2Completed = true;
+                document.getElementById('m2-icon').innerText = '🎉';
+                document.getElementById('m2-status').innerText = 'Completed!';
+                document.getElementById('m2-status').className = 'inline-block mt-1 text-[8px] font-bold uppercase text-emerald-600 bg-emerald-100 px-1.5 py-0.5 rounded';
+                document.getElementById('mission-2').className = 'p-2.5 bg-emerald-50 border-2 border-emerald-200 rounded-xl flex items-start gap-2.5 transition-all';
+                
+                // Unlock Mission 3
+                document.getElementById('m3-icon').innerText = '🟢';
+                document.getElementById('m3-status').innerText = 'In Progress';
+                document.getElementById('m3-status').className = 'inline-block mt-1 text-[8px] font-bold uppercase text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded';
+                document.getElementById('mission-3').className = 'p-2.5 bg-white border-2 border-slate-200 rounded-xl flex items-start gap-2.5 transition-all';
+
+                showModal('🧬', 'Reward Shift Mastered!', 'Incredible! By shifting rewards, the AI successfully learned to balance near edge horizons. Lab assignment 2 accomplished.');
+            }
+
+            generation++;
+            document.getElementById('gen').innerText = generation;
+
+            // Synthesise offspring brains
+            const parent1 = bestPerformer.brain;
+            const parent2 = runnerUpPerformer.brain;
+
+            agents.forEach((agent, index) => {
+                let nextBrain;
+                
+                if (index === 0) {
+                    nextBrain = new Brain(new Float32Array(parent1.weights)); // Elitism: Keep best
+                } else if (index === 1) {
+                    nextBrain = new Brain(new Float32Array(parent2.weights)); // Keep second
+                } else if (index === 2) {
+                    nextBrain = parent1.crossover(parent2); // Crossover hybrid
+                } else if (index < 6) {
+                    nextBrain = parent1.mutate(mutationRate * 0.7); // Low modifications
+                } else if (index < 9) {
+                    nextBrain = parent1.mutate(mutationRate); // Normal modifications
+                } else if (index === 9) {
+                    nextBrain = parent1.crossover(parent2).mutate(mutationRate * 1.5); // Wild exploration mutations
+                } else {
+                    nextBrain = new Brain(); // New blood random insertion
+                }
+                
+                agent.reset(nextBrain);
+            });
+
+            // Re-apply structures and follow indicators
+            agents.forEach(a => a.isChampion = false);
+            const championModel = agents.find(a => a.id === 0) || agents[0];
+            championModel.isChampion = true;
+
+            bestAgent = championModel;
+            inspectorTargetAgent = championModel;
+            currentFollowAgentId = championModel.id;
+        }
+
+        // --- REWARD DESIGNER OPTION BINDINGS ---
+        function setRewardStrategy(selectedStrategy) {
+            rewardType = selectedStrategy;
+            
+            // Visual highlights update
+            const optBalance = document.getElementById('reward-opt-balance');
+            const optEdge = document.getElementById('reward-opt-edge');
+            const optSpeed = document.getElementById('reward-opt-speed');
+
+            optBalance.className = "block p-2 rounded-xl border bg-white cursor-pointer hover:bg-emerald-100/50 transition-colors";
+            optEdge.className = "block p-2 rounded-xl border bg-white cursor-pointer hover:bg-emerald-100/50 transition-colors";
+            optSpeed.className = "block p-2 rounded-xl border bg-white cursor-pointer hover:bg-emerald-100/50 transition-colors";
+
+            if (selectedStrategy === 'balance') optBalance.classList.add('border-emerald-500', 'bg-emerald-50/50');
+            if (selectedStrategy === 'edge') optEdge.classList.add('border-emerald-500', 'bg-emerald-50/50');
+            if (selectedStrategy === 'speed') optSpeed.classList.add('border-emerald-500', 'bg-emerald-50/50');
+        }
+
+        document.querySelectorAll('input[name="reward-selector"]').forEach(input => {
+            input.addEventListener('change', (e) => {
+                setRewardStrategy(e.target.value);
+            });
+        });
+
+        // --- MANUAL PLAY MODE BINDINGS & LISTENERS ---
+        const btnPlayMode = document.getElementById('btn-play-mode');
+        const manualLegend = document.getElementById('manual-controls-legend');
+        
+        btnPlayMode.addEventListener('click', () => {
+            humanPlayMode = !humanPlayMode;
+            if (humanPlayMode) {
+                btnPlayMode.innerHTML = '<i class="fa-solid fa-square-check"></i> Exit Manual Control Mode';
+                btnPlayMode.className = 'btn-playful mt-2.5 w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md flex items-center justify-center gap-2 animate-pulse';
+                manualLegend.classList.remove('hidden');
+                
+                // Set inspector strictly to target 0 for playability
+                currentFollowAgentId = 0;
+                inspectorTargetAgent = agents[0];
+            } else {
+                btnPlayMode.innerHTML = '<i class="fa-solid fa-gamepad"></i> Enter Manual Play Mode';
+                btnPlayMode.className = 'btn-playful mt-2.5 w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-md flex items-center justify-center gap-2';
+                manualLegend.classList.add('hidden');
+            }
+        });
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key in humanKeys) {
+                humanKeys[e.key] = true;
+                e.preventDefault();
+            }
+        });
+
+        window.addEventListener('keyup', (e) => {
+            if (e.key in humanKeys) {
+                humanKeys[e.key] = false;
+                e.preventDefault();
+            }
+        });
+
+        function updateHumanInputs() {
+            if (!humanPlayMode) return;
+
+            const speed = 0.12;
+            if (humanKeys.w || humanKeys.ArrowUp) humanTiltZ = Math.max(-1.0, humanTiltZ - speed);
+            if (humanKeys.s || humanKeys.ArrowDown) humanTiltZ = Math.min(1.0, humanTiltZ + speed);
+            if (humanKeys.a || humanKeys.ArrowLeft) humanTiltX = Math.max(-1.0, humanTiltX - speed);
+            if (humanKeys.d || humanKeys.ArrowRight) humanTiltX = Math.min(1.0, humanTiltX + speed);
+        }
+
+        // --- CURRICULUM LESSON NAVIGATION SYSTEM ---
+        function updateLessonSlide() {
+            const slide = curriculumSlides[currentLessonIndex];
+            const textContainer = document.getElementById('lesson-text-container');
+            
+            textContainer.style.opacity = 0;
+            textContainer.style.transform = 'translateY(5px)';
+
+            setTimeout(() => {
+                textContainer.innerHTML = `
+                    <h4 class="font-bold text-indigo-700 text-xs mb-1.5">${slide.title}</h4>
+                    <p class="leading-normal mb-2 text-slate-600">${slide.desc}</p>
+                    <div class="bg-indigo-100/50 p-2 rounded-xl text-[10px] text-indigo-800 font-semibold italic flex items-start gap-1.5">
+                        <i class="fa-solid fa-compass text-indigo-500 shrink-0 mt-0.5"></i>
+                        <span>${slide.tip}</span>
+                    </div>
+                `;
+                textContainer.style.opacity = 1;
+                textContainer.style.transform = 'translateY(0)';
+            }, 180);
+
+            document.getElementById('lesson-page-indicator').innerText = `Slide ${currentLessonIndex + 1} / ${curriculumSlides.length}`;
+        }
+
+        document.getElementById('btn-lesson-prev').addEventListener('click', () => {
+            currentLessonIndex = (currentLessonIndex - 1 + curriculumSlides.length) % curriculumSlides.length;
+            updateLessonSlide();
+        });
+
+        document.getElementById('btn-lesson-next').addEventListener('click', () => {
+            currentLessonIndex = (currentLessonIndex + 1) % curriculumSlides.length;
+            updateLessonSlide();
+        });
+
+        // --- PLAYFUL POP QUIZ GRADERS ---
+        function renderQuiz() {
+            const quiz = quizChallenges[activeQuizIndex];
+            document.getElementById('quiz-question').innerText = quiz.q;
+            
+            const optionsBox = document.getElementById('quiz-options');
+            optionsBox.innerHTML = '';
+            document.getElementById('quiz-feedback').classList.add('hidden');
+
+            quiz.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-playful w-full text-left text-[10px] bg-white border border-slate-200 hover:bg-amber-100/30 p-2 rounded-xl transition-all font-semibold flex items-center justify-between';
+                btn.innerHTML = `<span>${idx + 1}. ${opt}</span> <i class="fa-regular fa-circle text-slate-300"></i>`;
+                
+                btn.onclick = () => checkQuizAnswer(idx, btn);
+                optionsBox.appendChild(btn);
+            });
+        }
+
+        function checkQuizAnswer(chosenIdx, clickedBtn) {
+            const quiz = quizChallenges[activeQuizIndex];
+            const feedback = document.getElementById('quiz-feedback');
+            feedback.classList.remove('hidden');
+
+            const optionButtons = document.getElementById('quiz-options').children;
+            for (let btn of optionButtons) {
+                btn.disabled = true; // disable further actions
+            }
+
+            if (chosenIdx === quiz.correct) {
+                clickedBtn.className = 'w-full text-left text-[10px] bg-emerald-50 border-2 border-emerald-300 p-2 rounded-xl transition-all font-semibold flex items-center justify-between text-emerald-800';
+                clickedBtn.querySelector('i').className = 'fa-solid fa-circle-check text-emerald-500';
+                feedback.className = 'text-[10px] font-bold mt-2 text-center text-emerald-600 animate-bounce';
+                feedback.innerHTML = '✨ Correct! Exceptional RL comprehension! Prep next question...';
+
+                setTimeout(() => {
+                    activeQuizIndex = (activeQuizIndex + 1) % quizChallenges.length;
+                    renderQuiz();
+                }, 3500);
+            } else {
+                clickedBtn.className = 'w-full text-left text-[10px] bg-rose-50 border-2 border-rose-300 p-2 rounded-xl transition-all font-semibold flex items-center justify-between text-rose-800';
+                clickedBtn.querySelector('i').className = 'fa-solid fa-circle-xmark text-rose-500';
+                feedback.className = 'text-[10px] font-bold mt-2 text-center text-rose-600';
+                feedback.innerHTML = `❌ Incorrect. Hint: ${quiz.hint}`;
+
+                // Reset answer capabilities shortly
+                setTimeout(() => {
+                    renderQuiz();
+                }, 4000);
+            }
+        }
+
+        // --- CONVENTIONAL SIDEPANELS LOGICS ---
+        window.switchTab = function(tabName) {
+            document.getElementById('tab-lessons').classList.add('hidden');
+            document.getElementById('tab-controls').classList.add('hidden');
+            document.getElementById('tab-missions').classList.add('hidden');
+
+            document.getElementById('tab-lessons-btn').className = 'flex-1 py-1.5 text-[11px] font-bold rounded-lg transition-all btn-playful text-slate-500 hover:text-slate-700 flex items-center justify-center gap-1';
+            document.getElementById('tab-controls-btn').className = 'flex-1 py-1.5 text-[11px] font-bold rounded-lg transition-all btn-playful text-slate-500 hover:text-slate-700 flex items-center justify-center gap-1';
+            document.getElementById('tab-missions-btn').className = 'flex-1 py-1.5 text-[11px] font-bold rounded-lg transition-all btn-playful text-slate-500 hover:text-slate-700 flex items-center justify-center gap-1';
+
+            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+            document.getElementById(`tab-${tabName}-btn`).className = 'flex-1 py-1.5 text-[11px] font-bold rounded-lg transition-all btn-playful bg-white text-sky-600 shadow-sm flex items-center justify-center gap-1';
+        }
+
+        window.toggleSidebar = function(elementId) {
+            const el = document.getElementById(elementId);
+            const isLeft = elementId === 'left-sidebar';
+            const arrow = document.getElementById(isLeft ? 'left-sidebar-arrow' : 'inspector-panel-arrow');
+            
+            if (isLeft) {
+                if (el.style.transform === 'translateX(-100%)') {
+                    el.style.transform = 'translateX(0)';
+                    arrow.className = 'fa-solid fa-chevron-left text-sky-600 text-xs';
+                } else {
+                    el.style.transform = 'translateX(-100%)';
+                    arrow.className = 'fa-solid fa-chevron-right text-sky-600 text-xs';
+                }
+            } else {
+                if (el.style.transform === 'translateX(100%)') {
+                    el.style.transform = 'translateX(0)';
+                    arrow.className = 'fa-solid fa-chevron-right text-sky-600 text-xs';
+                } else {
+                    el.style.transform = 'translateX(100%)';
+                    arrow.className = 'fa-solid fa-chevron-left text-sky-600 text-xs';
+                }
+            }
+        }
+
+        window.showModal = function(icon, title, desc) {
+            document.getElementById('modal-icon').innerText = icon;
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-desc').innerText = desc;
+            document.getElementById('custom-modal').classList.remove('hidden');
+        }
+        window.closeModal = function() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        // --- CONTROL ELEMENT EVENTS HANDLERS ---
+        const speedSlider = document.getElementById('speed-slider');
+        const speedLabel = document.getElementById('speed-label');
+        speedSlider.addEventListener('input', (e) => {
+            simSpeed = parseInt(e.target.value);
+            if (simSpeed === 1) speedLabel.innerText = '1x (Normal)';
+            else if (simSpeed < 5) speedLabel.innerText = `${simSpeed}x (Fast Warp)`;
+            else speedLabel.innerText = `${simSpeed}x (Super Warp!)`;
+        });
+
+        const mutationSlider = document.getElementById('mutation-slider');
+        const mutationLabel = document.getElementById('mutation-label');
+        mutationSlider.addEventListener('input', (e) => {
+            mutationRate = parseFloat(e.target.value) / 100;
+            mutationLabel.innerText = `${e.target.value}%`;
+        });
+
+        const windSlider = document.getElementById('wind-slider');
+        const windLabel = document.getElementById('wind-label');
+        windSlider.addEventListener('input', (e) => {
+            const labels = ['Off', 'Low', 'Medium', 'Strong', 'Severe'];
+            const val = parseInt(e.target.value);
+            windIntensity = val * 0.25;
+            windLabel.innerText = labels[val - 1];
+        });
+
+        document.getElementById('btn-force-gen').addEventListener('click', () => {
+            evolve();
+        });
+
+        document.getElementById('btn-reset-run').addEventListener('click', () => {
+            generation = 1;
+            bestScore = 0;
+            scoreDataset.length = 0;
+            avgDataset.length = 0;
+            historyLabels.length = 0;
+            document.getElementById('gen').innerText = generation;
+            document.getElementById('best').innerText = '0.0s';
+            
+            agents.forEach(agent => agent.reset(new Brain()));
+            progressChart.update();
+        });
+
+        // Window resize listeners
+        window.addEventListener('resize', () => {
+            const w = container.clientWidth;
+            const h = container.clientHeight;
+            camera.aspect = w / h;
+            camera.updateProjectionMatrix();
+            renderer.setSize(w, h);
+            resizeNeuralCanvas();
+        });
+
+        // --- ANIMATION LOOP EXECUTOR ---
+        let ticks = 0;
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Fetch human entries
+            updateHumanInputs();
+
+            // Run simulation steps based on warp factor
+            for (let step = 0; step < simSpeed; step++) {
+                ticks++;
+                
+                if (!isBrainFrozen) {
+                    agents.forEach(agent => {
+                        agent.update();
+                    });
+                }
+
+                // Apply physical systemic wind forces
+                if (windIntensity > 0) {
+                    agents.forEach(agent => {
+                        if (agent.alive && !isBrainFrozen) {
+                            const wx = Math.sin(ticks * 0.02) * 0.12 * windIntensity;
+                            const wz = Math.cos(ticks * 0.025) * 0.12 * windIntensity;
+                            agent.applyDisruptionForce(wx, wz);
+                        }
+                    });
+                }
+
+                // Physics Engine calculations solver
+                if (!isBrainFrozen) {
+                    world.fixedStep();
+                }
+            }
+
+            // Sync visual cameras
+            controls.update();
+
+            const followTarget = agents.find(a => a.id === currentFollowAgentId) || bestAgent;
+            if (followTarget && followTarget.alive) {
+                const targetPos = followTarget.platMesh.position;
+                controls.target.lerp(new THREE.Vector3(targetPos.x, targetPos.y, targetPos.z), 0.05);
+            }
+
+            // Live status stats tracker
+            const aliveCount = agents.filter(a => a.alive).length;
+            document.getElementById('active').innerText = aliveCount;
+
+            // Human Record tracking (strictly on platform 0 in manual control)
+            if (humanPlayMode) {
+                const hScore = agents[0].survivalTime;
+                if (hScore > humanBestScore) {
+                    humanBestScore = hScore;
+                    document.getElementById('human-best').innerText = `${humanBestScore.toFixed(1)}s`;
+                    
+                    // Mission 3 validation
+                    if (mission2Completed && !mission3Completed && humanBestScore >= 10.0) {
+                        mission3Completed = true;
+                        document.getElementById('m3-icon').innerText = '🎉';
+                        document.getElementById('m3-status').innerText = 'Completed!';
+                        document.getElementById('m3-status').className = 'inline-block mt-1 text-[8px] font-bold uppercase text-emerald-600 bg-emerald-100 px-1.5 py-0.5 rounded';
+                        document.getElementById('mission-3').className = 'p-2.5 bg-emerald-50 border-2 border-emerald-200 rounded-xl flex items-start gap-2.5 transition-all';
+                        
+                        showModal('🎨', 'Human vs Machine Cleared!', 'Outstanding manual balancing capacity! You out-maneuvered standard networks. All Lab courses cleared!');
+                    }
+                }
+            }
+
+            // Auto-advance evolution when all collapse
+            if (aliveCount === 0 && !isBrainFrozen) {
+                evolve();
+            }
+
+            // High Tech telemetry and neural update
+            if (inspectorTargetAgent) {
+                document.getElementById('ins-id').innerText = `Agent ID ${inspectorTargetAgent.id} ${inspectorTargetAgent.isChampion ? '🏆' : ''}`;
+                document.getElementById('ins-state').innerText = inspectorTargetAgent.alive ? 'THINKING LIVE' : 'FELL DOWN';
+                document.getElementById('ins-state').className = inspectorTargetAgent.alive ? 'font-extrabold text-emerald-500 animate-pulse' : 'font-extrabold text-rose-500';
+                document.getElementById('ins-score').innerText = `${inspectorTargetAgent.survivalTime.toFixed(1)}s`;
+                
+                const rx = inspectorTargetAgent.ballBody.position.x - inspectorTargetAgent.platBody.position.x;
+                const rz = inspectorTargetAgent.ballBody.position.z - inspectorTargetAgent.platBody.position.z;
+                const dist = Math.sqrt(rx * rx + rz * rz);
+                document.getElementById('ins-distance').innerText = `${dist.toFixed(2)}m`;
+                
+                const pct = Math.min((dist / (PLATFORM_SIZE / 2)) * 100, 100);
+                const pbar = document.getElementById('ins-distance-bar');
+                pbar.style.width = `${pct}%`;
+                
+                if (pct > 72) pbar.className = 'bg-rose-500 h-full transition-all duration-100';
+                else if (pct > 42) pbar.className = 'bg-amber-400 h-full transition-all duration-100';
+                else pbar.className = 'bg-sky-400 h-full transition-all duration-100';
+
+                if (!isBrainFrozen) {
+                    drawNeuralNetwork(inspectorTargetAgent);
+                }
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        // --- BOOTSTRAP INITIALIZATION ---
+        window.onload = function() {
+            setRewardStrategy('balance');
+            updateLessonSlide();
+            renderQuiz();
+
+            const initialBest = agents.find(a => a.id === 0) || agents[0];
+            initialBest.isChampion = true;
+            bestAgent = initialBest;
+            inspectorTargetAgent = initialBest;
+
+            showModal('🌱', 'Welcome to NeuroBalance Garden!', 'Ready to learn the basics of Reinforcement Learning? Click on the "Interactive Lessons" and try controlling platforms manually in "Game Mode"!');
+
+            animate();
+        };
+
+    </script>
+</body>
+</html>
